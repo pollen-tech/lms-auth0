@@ -44,10 +44,12 @@ export default defineNuxtConfig({
   css: ["@/assets/scss/style.scss"],
   runtimeConfig: {
     public: {
-      auth0_domain: "",
-      auth0_client_id: "",
-      auth0_audience: "",
-      auth0_redirect_uri: "",
+      auth0_domain: "https://pollen-pass-dev.us.auth0.com/",
+      auth0_client_id: "tXnZhibIdDblFgucHQ9f8JJKmC18yaKM",
+      auth0_client_secret:
+        "SDx5HuMps011-QtBph-ul-QUFCToBqXruZhLLYeEzLbXb8nIIjGGwuZurRoKjsEp",
+      auth0_audience: "pollen-pass",
+      auth0_redirect_uri: "http://localhost:3000/",
       lmsBackendUrl: "http://localhost:3080/",
       adminApiUrl: "https://admin-api-dev.pollen.tech",
       internalKey: "c3RhZ2luZy1wb2xsZW4udGVjaA==",
