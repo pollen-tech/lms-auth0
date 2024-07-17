@@ -12,14 +12,13 @@
       </v-col>
       <v-col cols="12" md="8">
         <div class="ma-8">
-          <AuthLogin v-if="!isEmailSent" @submit="goToVerification" />
+          <AuthLogin v-if="!isEmailSent" @submit="sendOtp" />
           <AuthVerification
             v-else
             :email="email"
             @previous-page="goToLogin"
             @verify-otp-event="verifyOtp"
             @send-otp-event="resendOtp"
-            @submit="goToRedirect"
           />
         </div>
       </v-col>
@@ -45,14 +44,27 @@ const verifyOtp = async (param) => {
     otp.value = param;
     isOtpValid.value = true;
     const body = {
-      otp: otp.value,
+      code: otp.value,
+      channel_code: "lms",
     };
-    const otpMessage = await lmsApi(url, "POST", body);
-    if (!otpMessage.statusCode) {
-      return otpMessage;
+
+    const url = `/auth0/password-less-email-otp-validate/${encodeURIComponent(
+      email.value
+    )}`;
+    const queryParams = new URLSearchParams(body).toString();
+    const fullUrl = `${url}?${queryParams}`;
+
+    const req = await lmsApi(fullUrl, "POST");
+
+    if (!req.error) {
+      isEmailSent.value = true;
+      goToRedirect();
     } else {
+      console.log(req);
     }
-  } catch (err) {}
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const resendOtp = () => {
@@ -62,22 +74,20 @@ const goToLogin = () => {
   isEmailSent.value = false;
 };
 
-const sendOtp = async () => {
+const sendOtp = async (param) => {
   try {
-    const body = {
-      email: email.value,
-    };
-    console.log(body);
-    // const otpMessage = await lmsApi(url, "POST", body);
-    // if (!otpMessage.statusCode) {
-    //   return otpMessage;
-    // } else {
-    // }
-  } catch (err) {}
-};
-const goToVerification = (param) => {
-  email.value = param;
-  isEmailSent.value = true;
+    email.value = param;
+    isOtpValid.value = true;
+    const req = await lmsApi(
+      `/auth0/password-less-email-login/${email.value}`,
+      "POST"
+    );
+    if (req) {
+      isEmailSent.value = true;
+    }
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const goToRedirect = () => {

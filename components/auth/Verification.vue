@@ -116,12 +116,7 @@
 <script setup>
 import { ref } from "vue";
 
-const emit = defineEmits([
-  "submit",
-  "verifyOtpEvent",
-  "sendOtpEvent",
-  "previousPage",
-]);
+const emit = defineEmits(["verifyOtpEvent", "sendOtpEvent", "previousPage"]);
 
 const props = defineProps({
   email: { type: String, default: "-" },
@@ -147,7 +142,7 @@ const timerRunning = ref(false);
 const timerInterval = ref(null);
 
 const submit = () => {
-  emit("submit");
+  emit("verifyOtpEvent", otp.value);
 };
 const formatTime = computed(() => {
   const minutes = Math.floor(remainingTime.value / 60);
