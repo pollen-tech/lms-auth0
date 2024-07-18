@@ -34,6 +34,16 @@ export default defineNuxtConfig({
     },
     //...
   ],
+  imports: {
+    dirs: [
+      // Scan top-level modules
+      "composables",
+      // ... or scan modules nested one level deep with a specific name and file extension
+      "composables/*/index.{ts,js,mjs,mts}",
+      // ... or scan all modules within given directory
+      "composables/**",
+    ],
+  },
   vite: {
     vue: {
       template: {
@@ -44,13 +54,13 @@ export default defineNuxtConfig({
   css: ["@/assets/scss/style.scss"],
   runtimeConfig: {
     public: {
-      auth0_domain: "https://pollen-pass-dev.us.auth0.com/",
+      auth0_domain: "https://pollen-pass-dev.us.auth0.com",
       auth0_client_id: "tXnZhibIdDblFgucHQ9f8JJKmC18yaKM",
       auth0_client_secret:
         "SDx5HuMps011-QtBph-ul-QUFCToBqXruZhLLYeEzLbXb8nIIjGGwuZurRoKjsEp",
       auth0_audience: "pollen-pass",
       auth0_redirect_uri: "http://localhost:3000/",
-      lmsBackendUrl: "http://localhost:3080/",
+      lmsBackendUrl: "http://localhost:3080/", // https://mt35s4a3zl.execute-api.ap-southeast-1.amazonaws.com/
       adminApiUrl: "https://admin-api-dev.pollen.tech",
       internalKey: "c3RhZ2luZy1wb2xsZW4udGVjaA==",
       appName: "Pollen LMS",
