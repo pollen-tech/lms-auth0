@@ -29,7 +29,7 @@ export const useAuth = () => {
     }
   };
 
-  const getUserId = () => {
+  const get_user_id = () => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("user_id");
     }
@@ -47,7 +47,7 @@ export const useAuth = () => {
     return true;
   };
 
-  const isUserAuthenticated = () => {
+  const is_user_authenticated = () => {
     if (typeof window !== "undefined") {
       const accessToken = localStorage.getItem("access_token");
       return accessToken !== null && !isTokenExpired();
@@ -70,9 +70,9 @@ export const useAuth = () => {
   };
 
   return {
-    getUserId,
+    get_user_id,
     handleAuth0Response,
-    isUserAuthenticated,
+    is_user_authenticated,
     getToken,
   };
 };

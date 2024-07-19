@@ -41,17 +41,17 @@ import { useSellerStore } from "~/stores/seller";
 
 const router = useRouter();
 
-const { getUserId } = useAuth();
-const userId = getUserId();
+const { get_user_id } = useAuth();
+const user_id = get_user_id();
 
-const { validateUserOnboard } = useSellerStore();
+const { get_company_profile } = useSellerStore();
 
 const isLoading = ref(false);
 const isUserOnboard = ref(false);
 
 onMounted(async () => {
   isLoading.value = true;
-  const req = await validateUserOnboard(userId);
+  const req = await get_company_profile(user_id);
   console.log(req);
   if (!req?.id) {
     isLoading.value = false;

@@ -49,13 +49,13 @@ export const useSellerStore = defineStore("seller", {
       );
       return data;
     },
-    async validateUserOnboard(param: any) {
+    async get_company_profile(param: any) {
       const data = await lmsApi(`/onboard-company/users/${param}`);
       return data;
     },
-    async getCompanyProfile(param: any) {
-      const data = await lmsApi(`/onboard-company/users/${param}`);
-      return data;
+    async validate_user_exist(param: any) {
+      const req = await lmsApi(`/users/pollen-pass-by-email/${param}`);
+      return req;
     },
   },
 });

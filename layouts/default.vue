@@ -122,7 +122,7 @@
       </v-skeleton-loader>
     </v-app-bar>
     <v-navigation-drawer
-      v-if="showSideNav"
+      v-if="showSideNav && isAuthenticated"
       v-model="drawer"
       :rail="rail"
       :permanent="!$vuetify.display.mobile"
@@ -269,7 +269,8 @@
         />
         <CompanySettings
           v-model="dialogVisibleCompany"
-          :user-id="userId"
+          :dialog_value="dialogVisibleCompany"
+          :user_id="userId"
           @close="dialogVisibleCompany = false"
         />
       </div>
@@ -294,8 +295,8 @@ const nuxtApp = useNuxtApp();
 const route = useRoute();
 const runtimeConfig = useRuntimeConfig();
 
-const { isUserAuthenticated, getUserId } = useAuth();
-const userId = getUserId();
+const { is_user_authenticated, get_user_id } = useAuth();
+const userId = get_user_id();
 
 const sidebarStore = useSidebarStore();
 const sidebar = sidebarStore.sidebarData;
@@ -311,45 +312,19 @@ const dialogVisible = ref(false);
 const loading = ref(true);
 const showSideNav = ref(true);
 const excludeSideNav = ref(["/onboarding"]);
-const isAuthenticated = ref(false);
 const dialogVisibleCompany = ref(false);
+const isAuthenticated = computed(() => {
+  return is_user_authenticated();
+});
 
 onMounted(async () => {
   if (excludeSideNav.value.includes(currentUrl.value)) {
     showSideNav.value = false;
   }
-  console.log(showSideNav.value);
-  isAuthenticated.value = isUserAuthenticated();
-  console.log(isAuthenticated.value);
-
   setTimeout(() => {
     loading.value = false;
   }, 800);
 });
-
-const isAuthenticated1 = () => {
-  const expiresAt = JSON.parse(localStorage.getItem("expires_at"));
-  console.log(expiresAt);
-  return new Date().getTime() < expiresAt;
-};
-
-const getProfile = () => {
-  const accessToken = localStorage.getItem("access_token");
-
-  if (!accessToken) {
-    throw new Error("No access token found");
-  }
-
-  return new Promise((resolve, reject) => {
-    auth0Client.client.userInfo(accessToken, (err, profile) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(profile);
-      }
-    });
-  });
-};
 
 const showProfileSetting = () => {
   dialogVisible.value = true;
@@ -360,7 +335,8 @@ const showCompanySetting = () => {
 };
 
 const showNavMobile = () => {
-  drawer;
+  drawer.value = !drawer.value;
+  rail.value = false;
 };
 
 const onLogin = () => {

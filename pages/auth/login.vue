@@ -46,15 +46,14 @@ const otp = ref("");
 const isOtpValid = ref(false);
 const isLoading = ref(false);
 const showLogin = ref(false);
-const isAuthenticated = computed(() => auth.isUserAuthenticated());
+const is_authenticated = computed(() => auth.is_user_authenticated());
 
 onMounted(() => {
   isLoading.value = true;
   setTimeout(() => {
-    console.log(isAuthenticated.value);
     isLoading.value = false;
-    showLogin.value = !isAuthenticated.value;
-    if (isAuthenticated.value) {
+    showLogin.value = !is_authenticated.value;
+    if (is_authenticated.value) {
       router.push("/");
     }
   }, 2000);

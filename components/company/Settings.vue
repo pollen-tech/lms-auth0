@@ -103,7 +103,7 @@
                           variant="outlined"
                           placeholder="Enter First Name"
                           :rules="required"
-                          :disabled="!isAvailable"
+                          :disabled="!is_available"
                         ></v-text-field>
                       </div>
                       <div class="my-2">
@@ -119,18 +119,62 @@
                           :disabled="!isAvailable"
                         ></v-text-field>
                       </div>
-                      <div class="my-2">
-                        <label class="font-weight-medium text-body-2"
-                          >Company Type
+                      <div class="my-2 text-start flex-1-0">
+                        <label class="font-weight-medium"
+                          >Company Type <span class="red--text">*</span>
                         </label>
-
-                        <v-text-field
-                          v-model="company.type"
+                        <v-combobox
+                          v-model="company.company_type_id"
+                          :items="seller_store.sellerCompanyTypes"
+                          item-value="id"
+                          item-title="name"
+                          :return-object="true"
+                          placeholder="Select Company Type"
                           variant="outlined"
-                          placeholder="Enter Preferred Name"
                           :rules="required"
-                          :disabled="!isAvailable"
-                        ></v-text-field>
+                          :disabled="form_disabled"
+                        >
+                          <template v-slot:item="data">
+                            <v-list-item
+                              :key="data.item.id"
+                              @click="
+                                () => {
+                                  console.log(data);
+                                  data.props.onClick(data.item);
+                                }
+                              "
+                              v-bind="data.attrs"
+                            >
+                              <template v-slot:prepend> </template>
+
+                              <v-list-item-content>
+                                <v-list-item-title>
+                                  {{ data.item.title }}
+
+                                  <v-tooltip class="custom-icon">
+                                    <div
+                                      class="multiline-text d-flex flex-column"
+                                      style="width: 250px"
+                                    >
+                                      <b>{{ data.item.title }}</b>
+                                      <span>{{
+                                        data.item.raw.description
+                                      }}</span>
+                                    </div>
+                                    <template v-slot:activator="{ props }">
+                                      <v-icon
+                                        v-bind="props"
+                                        size="x-small"
+                                        color="grey"
+                                        icon="mdi-information-outline"
+                                      ></v-icon>
+                                    </template>
+                                  </v-tooltip>
+                                </v-list-item-title>
+                              </v-list-item-content>
+                            </v-list-item>
+                          </template>
+                        </v-combobox>
                       </div>
 
                       <div class="my-2">
@@ -138,14 +182,18 @@
                           >Country of Operations
                           <span class="red--text">*</span></label
                         >
-
-                        <v-text-field
+                        <v-autocomplete
                           v-model="company.country"
+                          item-value="id"
+                          item-title="name"
+                          :items="countries"
+                          :return-object="true"
+                          placeholder="Choose One"
                           variant="outlined"
-                          placeholder="Enter Email"
                           :rules="required"
-                          :disabled="!isAvailable"
-                        ></v-text-field>
+                          clearable
+                          :disabled="form_disabled"
+                        />
                       </div>
 
                       <div class="my-2">
@@ -153,24 +201,19 @@
                           >How much are you looking to liquidate monthly?
                           <span class="red--text">*</span></label
                         >
-
-                        <v-text-field
-                          v-model="company.liquidate"
+                        <v-autocomplete
+                          v-model="company.liquidate_unit_id"
+                          item-value="id"
+                          item-title="name"
+                          :items="seller_store.sellerLiquidate"
+                          :return-object="true"
+                          placeholder="Choose Multiple"
                           variant="outlined"
-                          placeholder="Enter Email"
                           :rules="required"
-                          :disabled="!isAvailable"
-                        ></v-text-field>
+                          clearable
+                          :disabled="form_disabled"
+                        />
                       </div>
-                    </v-sheet>
-                    <v-sheet class="ma-2 pa-6 bg-white">
-                      <v-btn
-                        text="Save Changes"
-                        color="#8431e7"
-                        class="mb-2 mx-2 me-auto w-50 text-capitalize"
-                        block
-                        :disabled="!isAvailable"
-                      />
                     </v-sheet>
                   </v-col>
                   <v-col>
@@ -215,12 +258,13 @@
                         </v-tooltip>
                       </v-row>
                     </v-sheet>
-                    <v-sheet class="ma-2 pa-6 w-100 bg-white">
+                    <v-sheet class="ma-2 pa-6 bg-white">
                       <v-btn
                         block
                         text="Save Changes"
                         color="#8431e7"
                         class="ma-1 me-auto w-50 text-capitalize rounded-lg"
+                        :disabled="!isAvailable"
                       />
                     </v-sheet>
                   </v-col>
@@ -236,66 +280,58 @@
 
 <script setup>
 import { ref } from "vue";
-import moment from "moment";
-
-import { VueTelInput } from "vue-tel-input";
 import "vue-tel-input/vue-tel-input.css";
 import { lmsApi } from "~/services/api";
 import { useSellerStore } from "~/stores/seller";
+import { useCountryStore } from "~/stores/country";
 
 const props = defineProps({
-  userId: { type: String, default: "" },
+  dialog_value: { type: String, default: false },
+  user_id: { type: String, default: "" },
 });
 const emit = defineEmits(["close"]);
 
 const runtimeConfig = useRuntimeConfig();
 
-const { getCompanyProfile } = useSellerStore();
+const seller_store = useSellerStore();
+const { get_company_profile } = seller_store;
+const countryStore = useCountryStore();
+const { countries } = storeToRefs(countryStore);
 
 const userProfile = ref({ id: null });
 const dialogVisible = ref(false);
-const isAvailable = ref(false);
-
-onMounted(async () => {
-  getCompany();
-  // await getUserInfo(""); TODO
-});
-
-const getCompany = async () => {
-  const req = await getCompanyProfile(props.userId);
-  if (req) {
-    company.value = req;
-  }
-};
+const is_available = ref(false);
+const form_disabled = ref(true);
 const company = ref({
   id: "",
   name: "",
-  type: "",
+  company_type_id: "",
   country: "",
-  liquidate: "",
+  liquidate_unit_id: "",
 });
 const required = [(v) => !!v || "Field is required"];
+
+onUpdated(async () => {
+  if (props.dialog_value && !company.value.id) {
+    seller_store.getCompanyTypes();
+    seller_store.getLiquidateUnit();
+    countryStore.getCountries();
+    await getCompany();
+  }
+});
+
+const getCompany = async () => {
+  const req = await get_company_profile(props.user_id);
+  if (req) {
+    if (JSON.stringify(company.value) !== JSON.stringify(req)) {
+      company.value = req;
+    }
+  }
+};
 
 const closeDialog = () => {
   dialogVisible.value = false;
   emit("close");
-};
-
-const getUserInfo = async (param) => {
-  try {
-    const url = `${runtimeConfig.public.lmsApi}/user/reference/${param}`;
-    const req = await lmsApi(url, "GET");
-    if (!req.statusCode) {
-      userProfile.value = req || {};
-      profile.value = {
-        firstname: req.firstName,
-        lastname: req.lastName,
-        phone: req.phone,
-        email: req.email,
-      };
-    } else {
-    }
-  } catch (err) {}
 };
 </script>
 
