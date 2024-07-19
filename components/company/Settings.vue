@@ -76,7 +76,7 @@
                 <v-breadcrumbs
                   class="text-caption text-capitalize"
                   color="deep-purple-accent-4"
-                  :items="['Company Name', 'Contact Information']"
+                  :items="[company.name, 'Contact Information']"
                 >
                   <template #prepend>
                     <v-icon size="small" color="#782CD1">mdi-home</v-icon>
@@ -281,7 +281,6 @@
 <script setup>
 import { ref } from "vue";
 import "vue-tel-input/vue-tel-input.css";
-import { lmsApi } from "~/services/api";
 import { useSellerStore } from "~/stores/seller";
 import { useCountryStore } from "~/stores/country";
 
@@ -298,7 +297,6 @@ const { get_company_profile } = seller_store;
 const countryStore = useCountryStore();
 const { countries } = storeToRefs(countryStore);
 
-const userProfile = ref({ id: null });
 const dialogVisible = ref(false);
 const is_available = ref(false);
 const form_disabled = ref(true);

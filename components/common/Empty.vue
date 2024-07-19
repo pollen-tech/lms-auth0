@@ -7,7 +7,7 @@
         src="../../assets/image/landing-empty.png"
       />
     </div>
-    <div class="text-center text-body-2">
+    <div v-if="!user_authenticated" class="text-center text-body-2">
       <v-btn
         variant="outlined"
         class="my-4 mx-2 me-auto text-capitalize"
@@ -24,30 +24,19 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup>
+import { ref } from "vue";
 
-export default defineComponent({
-  setup() {
-    return {};
-  },
-  data() {
-    return {
-      phoneLocal: "",
-      salesTeamNumber: "",
-      config: null,
-    };
-  },
-  mounted() {
-    const config = useRuntimeConfig();
-    this.phoneLocal = "";
-  },
-  methods: {
-    goToLogin() {
-      navigateTo("/auth/login");
-    },
+const props = defineProps({
+  user_authenticated: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
 });
+
+const phoneLocal = ref("");
+const salesTeamNumber = ref("");
 </script>
 
 <style scoped></style>

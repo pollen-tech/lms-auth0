@@ -74,18 +74,6 @@
               </v-row>
             </div>
             <div class="px-10 py-4">
-              <div class="d-flex flex-column mb-2">
-                <v-breadcrumbs
-                  class="text-caption text-capitalize"
-                  color="deep-purple-accent-4"
-                  :items="['Pollen Pass Profile', 'Contact Information']"
-                >
-                  <template #prepend>
-                    <v-icon size="small" color="#782CD1">mdi-home</v-icon>
-                  </template>
-                </v-breadcrumbs>
-              </div>
-
               <v-tabs
                 v-model="tab"
                 align-tabs="start"
@@ -94,7 +82,7 @@
                 <v-tab value="1" class="text-capitalize"
                   >Pollen Pass Profile Settings</v-tab
                 >
-                <v-tab value="2" class="text-capitalize" disabled=""
+                <v-tab value="2" class="text-capitalize"
                   >Channel Profiles</v-tab
                 >
               </v-tabs>
@@ -119,7 +107,7 @@
                             >
 
                             <v-text-field
-                              v-model="profile.firstname"
+                              v-model="profile.first_name"
                               variant="outlined"
                               placeholder="Enter First Name"
                               :rules="required"
@@ -132,30 +120,13 @@
                             >
 
                             <v-text-field
-                              v-model="profile.lastname"
+                              v-model="profile.last_name"
                               variant="outlined"
                               placeholder="Enter Last Name"
                               :rules="required"
                               :disabled="!isAvailable"
                             ></v-text-field>
                           </div>
-                          <div class="my-2">
-                            <label class="font-weight-medium text-body-2"
-                              >Preferred Name
-                              <span class="text-grey text-caption"
-                                >(Optional)</span
-                              ></label
-                            >
-
-                            <v-text-field
-                              v-model="profile.firstname"
-                              variant="outlined"
-                              placeholder="Enter Preferred Name"
-                              :rules="required"
-                              :disabled="!isAvailable"
-                            ></v-text-field>
-                          </div>
-
                           <div class="my-2">
                             <label class="font-weight-medium text-body-2"
                               >Phone Number
@@ -224,17 +195,14 @@
                             />
                             <div class="text-white">
                               <p class="font-weight-bold">
-                                {{
-                                  userProfile?.firstName +
-                                  " " +
-                                  userProfile?.lastName
-                                }}
+                                {{ profile?.first_name || "-" }}
+                                {{ profile?.last_name || "-" }}
                               </p>
                               <p class="text-caption">
-                                {{ userProfile?.email }}
+                                {{ profile?.email }}
                               </p>
                               <p class="text-caption">
-                                {{ userProfile?.phone }}
+                                {{ profile?.phone_no }}
                               </p>
                             </div>
                           </div>
@@ -245,7 +213,7 @@
                             <div>
                               <p class="font-weight-bold">Pollen Pass ID #:</p>
                               <p class="font-weight-bold">
-                                {{ userProfile?.id }}
+                                {{ profile?.id }}
                               </p>
                             </div>
                             <div>
@@ -254,7 +222,7 @@
                               </p>
                               <p class="font-weight-bold text-body-2">
                                 {{
-                                  moment(userProfile?.createdAt).format(
+                                  moment(profile?.created_at).format(
                                     "DD/MM/YYYY"
                                   )
                                 }}
@@ -264,6 +232,28 @@
                         </div>
                       </v-col>
                     </v-row>
+                  </v-container>
+                </v-tabs-window-item>
+                <v-tabs-window-item value="2">
+                  <v-container fluid>
+                    <v-table class="bg-white">
+                      <thead>
+                        <tr class="">
+                          <th class="text-left font-weight-bold">Channel</th>
+                          <th class="text-left font-weight-bold">Created At</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>{{ CHANNEL[profile.channel] || "unknown" }}</td>
+                          <td>
+                            {{
+                              moment(profile?.created_at).format("DD/MM/YYYY")
+                            }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </v-table>
                   </v-container>
                 </v-tabs-window-item>
               </v-tabs-window>
@@ -282,30 +272,57 @@ import moment from "moment";
 import { VueTelInput } from "vue-tel-input";
 import "vue-tel-input/vue-tel-input.css";
 import { lmsApi } from "~/services/api";
+import { useSellerStore } from "~/stores/seller";
+import { CHANNEL } from "~/utils/constant";
 
+const props = defineProps({
+  dialog_value: { type: String, default: false },
+  user_id: { type: String, default: "" },
+});
 const emit = defineEmits(["close"]);
 
 const runtimeConfig = useRuntimeConfig();
 
-const userProfile = ref({ id: null });
-const dialogVisible = ref(false);
+const seller_store = useSellerStore();
+const { get_user_profile } = seller_store;
+
 const tab = ref(null);
+const dialogVisible = ref(false);
 const phoneValid = ref(true);
 const isAvailable = ref(false);
+const profile = ref({
+  id: "",
+  first_name: "",
+  last_name: "",
+  country_code: "",
+  phone_no: "",
+  phone_verified: false,
+  email: "",
+  channel: "",
+  status: "",
+  created_at: "",
+});
+const required = [(v) => !!v || "Field is required"];
 
 onMounted(async () => {
   // await getUserInfo(""); TODO
 });
-
-const profile = ref({
-  firstname: "",
-  lastname: "",
-  preferredname: "",
-  phone: "",
-  email: "",
+onUpdated(async () => {
+  console.log(props.dialog_value && !profile.value.id);
+  if (props.dialog_value && !profile.value.id) {
+    await get_profile();
+  }
 });
-const required = [(v) => !!v || "Field is required"];
 
+const get_profile = async () => {
+  const req = await get_user_profile(props.user_id);
+  if (req) {
+    if (JSON.stringify(profile.value) !== JSON.stringify(req)) {
+      profile.value = req;
+      console.log(profile.value);
+    }
+  }
+};
 const phoneObject = (object) => {
   phoneValid.value = object.valid;
   profile.value.phone = object?.number;
@@ -314,23 +331,6 @@ const phoneObject = (object) => {
 const closeDialog = () => {
   dialogVisible.value = false;
   emit("close");
-};
-
-const getUserInfo = async (param) => {
-  try {
-    const url = `${runtimeConfig.public.lmsApi}/user/reference/${param}`;
-    const req = await lmsApi(url, "GET");
-    if (!req.statusCode) {
-      userProfile.value = req || {};
-      profile.value = {
-        firstname: req.firstName,
-        lastname: req.lastName,
-        phone: req.phone,
-        email: req.email,
-      };
-    } else {
-    }
-  } catch (err) {}
 };
 </script>
 

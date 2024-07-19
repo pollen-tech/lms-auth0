@@ -35,6 +35,7 @@ import { useAuth } from "~/composables/auth0";
 
 definePageMeta({
   layout: false,
+  middleware: "auth",
 });
 
 const router = useRouter();

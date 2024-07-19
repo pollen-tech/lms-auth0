@@ -26,7 +26,7 @@
       </div>
       <v-spacer />
       <v-skeleton-loader :loading="loading" type="list-item-two-line">
-        <v-menu v-if="$vuetify.display.mobile && !isAuthenticated">
+        <v-menu v-if="$vuetify.display.mobile && !is_authenticated">
           <template #activator="{ props }">
             <div>
               <v-btn icon="mdi-dots-vertical" v-bind="props"> </v-btn>
@@ -58,7 +58,7 @@
         </v-menu>
         <div v-else class="my-10 bg-white">
           <v-btn
-            v-if="!isAuthenticated"
+            v-if="!is_authenticated"
             variant="outlined"
             class="my-4 mx-2 me-auto text-capitalize"
             color="purple-darken-3"
@@ -66,14 +66,14 @@
             >Login</v-btn
           >
           <v-btn
-            v-if="!isAuthenticated"
+            v-if="!is_authenticated"
             class="my-4 mx-2 me-auto text-capitalize bg-purple-darken-3"
             @click="onSignUp()"
             >Sign Up with Pollen Pass</v-btn
           >
         </div>
 
-        <v-menu v-if="isAuthenticated">
+        <v-menu v-if="is_authenticated">
           <template #activator="{ props }">
             <div>
               <v-btn
@@ -108,7 +108,7 @@
           </v-card>
         </v-menu>
         <div
-          v-if="isAuthenticated && !$vuetify.display.mobile"
+          v-if="is_authenticated && !$vuetify.display.mobile"
           class="d-flex flex-column ma-2"
         >
           <h5>
@@ -122,7 +122,7 @@
       </v-skeleton-loader>
     </v-app-bar>
     <v-navigation-drawer
-      v-if="showSideNav && isAuthenticated"
+      v-if="showSideNav && is_authenticated"
       v-model="drawer"
       :rail="rail"
       :permanent="!$vuetify.display.mobile"
@@ -262,9 +262,11 @@
       style="background: #f9fafb"
     >
       <div class="h-100 w-100 overflow-hidden">
-        <slot />
+        <slot :user_authenticated="is_authenticated" />
         <ProfileSettings
           v-model="dialogVisible"
+          :dialog_value="dialogVisible"
+          :user_id="userId"
           @close="dialogVisible = false"
         />
         <CompanySettings
@@ -313,7 +315,7 @@ const loading = ref(true);
 const showSideNav = ref(true);
 const excludeSideNav = ref(["/onboarding"]);
 const dialogVisibleCompany = ref(false);
-const isAuthenticated = computed(() => {
+const is_authenticated = computed(() => {
   return is_user_authenticated();
 });
 
@@ -321,6 +323,7 @@ onMounted(async () => {
   if (excludeSideNav.value.includes(currentUrl.value)) {
     showSideNav.value = false;
   }
+  console.log(is_authenticated.value);
   setTimeout(() => {
     loading.value = false;
   }, 800);
@@ -347,7 +350,10 @@ const onSignUp = () => {
   navigateTo("/auth/login");
 };
 
-const onLogout = () => {};
+const onLogout = () => {
+  localStorage.clear();
+  window.location.reload();
+};
 
 const getUserInfo = async (param) => {
   try {

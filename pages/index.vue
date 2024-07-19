@@ -11,7 +11,7 @@
           </template>
         </v-breadcrumbs>
         <v-row
-          v-if="!userProfile?.id"
+          v-if="user_authenticated"
           style="background-color: #faf5ff"
           class="rounded-lg align-center pa-4 pb-6 mx-2"
         >
@@ -44,7 +44,7 @@
         </v-row>
       </v-card>
 
-      <CommonEmpty />
+      <CommonEmpty :user_authenticated="is_authenticated" />
     </v-container>
 
     <CommonConfirm ref="confirm" />
@@ -54,7 +54,13 @@
 <script setup>
 const confirm = ref(null);
 import { useNuxtApp } from "#app";
+import { useAuth } from "~/composables/auth0";
+import { useSellerStore } from "~/stores/seller";
 
+const { is_user_authenticated } = useAuth();
+const is_authenticated = computed(() => {
+  return is_user_authenticated();
+});
 const nuxtApp = useNuxtApp();
 const runtimeConfig = useRuntimeConfig();
 

@@ -57,5 +57,9 @@ export const useSellerStore = defineStore("seller", {
       const req = await lmsApi(`/users/pollen-pass-by-email/${param}`);
       return req;
     },
+    async get_user_profile(param: any) {
+      const req = await lmsApi(`/users/${param}`);
+      return req;
+    },
   },
 });
