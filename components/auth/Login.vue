@@ -28,7 +28,7 @@
         elevation="0"
         class="align-center my-4"
       >
-        <v-form ref="form">
+        <v-form ref="formRef">
           <div class="my-4 text-start flex-1-0">
             <label class="font-weight-medium"
               >Email <span class="red--text">*</span>
@@ -62,6 +62,7 @@
             </template>
           </v-checkbox>
           <v-btn
+            :disabled="!checkAcceptTerms"
             class="my-4 me-auto text-capitalize rounded-lg"
             color="#8431E7"
             block
@@ -120,9 +121,15 @@ const requiredEmail = [
 const isLoading = ref(false);
 const showDialog = ref(false);
 const checkAcceptTerms = ref(false);
+const formRef = ref(null);
 
-const submit = () => {
-  emit("submit", email.value);
+const submit = async () => {
+  isLoading.value = true;
+  const { valid } = await formRef.value.validate();
+  if (valid) {
+    emit("submit", email.value);
+  }
+  isLoading.value = false;
 };
 
 const checkTerms = () => {};

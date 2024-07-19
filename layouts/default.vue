@@ -122,7 +122,7 @@
       </v-skeleton-loader>
     </v-app-bar>
     <v-navigation-drawer
-      v-if="isAuthenticated && showSideNav"
+      v-if="showSideNav"
       v-model="drawer"
       :rail="rail"
       :permanent="!$vuetify.display.mobile"
@@ -160,7 +160,7 @@
           >
             <v-avatar color="purple-lighten-5 " size="33">
               <span class="purple--text text-h6 text-capitalize">
-                {{ userProfile?.firstName.charAt(0) || "" }}
+                {{ "-" }}
               </span>
             </v-avatar>
             <div class="pl-6">
@@ -185,6 +185,55 @@
           height: $vuetify.display.height <= 430 ? '105%!important' : '',
         }"
       >
+        <template v-for="(items, index) in sidebar">
+          <v-list-item
+            v-if="!items.children"
+            :key="index"
+            :prepend-icon="items?.icon"
+            :title="items.title"
+            :value="items.name"
+            :to="items.to"
+            NuxtLink
+            @click="items.name === 'company' ? showCompanySetting() : ''"
+          >
+          </v-list-item>
+          <template v-else>
+            <v-list-group :key="index" :value="items.name">
+              <template #activator="{ props }">
+                <v-list-item
+                  v-bind="props"
+                  :prepend-icon="items.icon"
+                  :title="items.title"
+                ></v-list-item>
+              </template>
+              <v-list-item
+                v-for="(child, i) in items.children"
+                :key="i"
+                :value="child.title"
+                :to="child.to"
+                NuxtLink
+              >
+                <template v-slot:prepend>
+                  <v-icon
+                    v-if="rail"
+                    :icon="child.icon"
+                    class="ml-n14"
+                    size="small"
+                  ></v-icon>
+                  <v-tooltip v-if="rail" activator="parent" location="start">
+                    <span>
+                      {{ child.title }}
+                    </span>
+                  </v-tooltip>
+                  <div v-if="!rail">
+                    <v-icon :icon="child.icon" size="small"></v-icon>
+                    <span class="text-body-2 ml-2"> {{ child.title }}</span>
+                  </div>
+                </template>
+              </v-list-item>
+            </v-list-group>
+          </template>
+        </template>
         <v-spacer v-if="$vuetify.display.height > 390"></v-spacer>
         <v-list-item
           class="logout-item w-100"
@@ -218,6 +267,11 @@
           v-model="dialogVisible"
           @close="dialogVisible = false"
         />
+        <CompanySettings
+          v-model="dialogVisibleCompany"
+          :user-id="userId"
+          @close="dialogVisibleCompany = false"
+        />
       </div>
       <v-footer class="pa-0 w-100 d-flex justify-end bg-transparent">
         <p class="text-caption text-grey pr-4 pb-2">
@@ -231,12 +285,21 @@
 <script setup>
 import { ref } from "vue";
 import { useRoute } from "vue-router";
+import { useAuth } from "~/composables/auth0";
+import { useSidebarStore } from "~/stores/sidebar";
 
 import { useNuxtApp } from "#app";
 
 const nuxtApp = useNuxtApp();
 const route = useRoute();
 const runtimeConfig = useRuntimeConfig();
+
+const { isUserAuthenticated, getUserId } = useAuth();
+const userId = getUserId();
+
+const sidebarStore = useSidebarStore();
+const sidebar = sidebarStore.sidebarData;
+
 const currentUrl = computed(() => route.fullPath);
 const userProfile = ref({ id: null });
 const title = ref("Pollen LMS");
@@ -249,19 +312,52 @@ const loading = ref(true);
 const showSideNav = ref(true);
 const excludeSideNav = ref(["/onboarding"]);
 const isAuthenticated = ref(false);
-
-const showProfileSetting = () => {
-  dialogVisible.value = true;
-};
+const dialogVisibleCompany = ref(false);
 
 onMounted(async () => {
   if (excludeSideNav.value.includes(currentUrl.value)) {
     showSideNav.value = false;
   }
+  console.log(showSideNav.value);
+  isAuthenticated.value = isUserAuthenticated();
+  console.log(isAuthenticated.value);
+
   setTimeout(() => {
     loading.value = false;
   }, 800);
 });
+
+const isAuthenticated1 = () => {
+  const expiresAt = JSON.parse(localStorage.getItem("expires_at"));
+  console.log(expiresAt);
+  return new Date().getTime() < expiresAt;
+};
+
+const getProfile = () => {
+  const accessToken = localStorage.getItem("access_token");
+
+  if (!accessToken) {
+    throw new Error("No access token found");
+  }
+
+  return new Promise((resolve, reject) => {
+    auth0Client.client.userInfo(accessToken, (err, profile) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(profile);
+      }
+    });
+  });
+};
+
+const showProfileSetting = () => {
+  dialogVisible.value = true;
+};
+
+const showCompanySetting = () => {
+  dialogVisibleCompany.value = true;
+};
 
 const showNavMobile = () => {
   drawer;

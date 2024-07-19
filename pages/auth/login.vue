@@ -1,6 +1,7 @@
 <template>
   <div class="h-screen">
-    <v-row no-gutters>
+    <CommonLoading v-if="isLoading" :loading="true" />
+    <v-row v-if="showLogin" no-gutters>
       <v-col
         v-if="!$vuetify.display.mobile"
         cols="12"
@@ -18,7 +19,7 @@
             :email="email"
             @previous-page="goToLogin"
             @verify-otp-event="verifyOtp"
-            @send-otp-event="resendOtp"
+            @send-otp-event="sendOtp"
           />
         </div>
       </v-col>
@@ -28,16 +29,36 @@
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { lmsApi } from "~/services/api";
+import { useAuth } from "~/composables/auth0";
 
 definePageMeta({
   layout: false,
 });
 
+const router = useRouter();
+const auth = useAuth();
+
 const isEmailSent = ref(false);
 const email = ref("");
 const otp = ref("");
 const isOtpValid = ref(false);
+const isLoading = ref(false);
+const showLogin = ref(false);
+const isAuthenticated = computed(() => auth.isUserAuthenticated());
+
+onMounted(() => {
+  isLoading.value = true;
+  setTimeout(() => {
+    console.log(isAuthenticated.value);
+    isLoading.value = false;
+    showLogin.value = !isAuthenticated.value;
+    if (isAuthenticated.value) {
+      router.push("/");
+    }
+  }, 2000);
+});
 
 const verifyOtp = async (param) => {
   try {
@@ -45,9 +66,9 @@ const verifyOtp = async (param) => {
     isOtpValid.value = true;
     const body = {
       code: otp.value,
-      channel_code: "lms",
+      channel_code: "CH_LMS",
     };
-
+    // http://localhost:3080/auth0/password-less-email-otp-validate/rajesh.hofo%40gmail.com?code=967060&channel_code=CH_LMS
     const url = `/auth0/password-less-email-otp-validate/${encodeURIComponent(
       email.value
     )}`;
@@ -56,7 +77,8 @@ const verifyOtp = async (param) => {
 
     const req = await lmsApi(fullUrl, "POST");
 
-    if (!req.error) {
+    if (req) {
+      auth.handleAuth0Response(req);
       isEmailSent.value = true;
       goToRedirect();
     } else {
@@ -67,9 +89,6 @@ const verifyOtp = async (param) => {
   }
 };
 
-const resendOtp = () => {
-  sendOtp();
-};
 const goToLogin = () => {
   isEmailSent.value = false;
 };
@@ -89,7 +108,6 @@ const sendOtp = async (param) => {
     console.log(err);
   }
 };
-
 const goToRedirect = () => {
   // navigateTo("/redirect");
 

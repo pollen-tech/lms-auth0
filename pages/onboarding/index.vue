@@ -1,5 +1,6 @@
 <template>
   <div class="h-100">
+    <CommonLoading v-if="isLoading" :loading="true" />
     <OnboardingHeader />
     <v-container>
       <div class="d-flex justify-space-between my-6">
@@ -22,7 +23,10 @@
         </v-col>
         <v-col cols="12" md="7" class="d-flex justify-center">
           <div class="w-75 d-flex flex-column h-100 py-8 mt-10">
-            <OnboardingCompanyInformation @submit="goToHomePage" />
+            <OnboardingCompanyInformation
+              :user-id="userId"
+              @submit="goToHomePage"
+            />
           </div>
         </v-col>
       </v-row>
@@ -31,11 +35,34 @@
 </template>
 
 <script setup>
-const user = ref();
+import { useRouter } from "vue-router";
+import { useAuth } from "~/composables/auth0";
+import { useSellerStore } from "~/stores/seller";
 
-onBeforeMount(async () => {});
+const router = useRouter();
+
+const { getUserId } = useAuth();
+const userId = getUserId();
+
+const { validateUserOnboard } = useSellerStore();
+
+const isLoading = ref(false);
+const isUserOnboard = ref(false);
+
+onMounted(async () => {
+  isLoading.value = true;
+  const req = await validateUserOnboard(userId);
+  console.log(req);
+  if (!req?.id) {
+    isLoading.value = false;
+    isUserOnboard.value = true;
+  } else {
+    isLoading.value = false;
+    goToHomePage();
+  }
+});
 const goToHomePage = () => {
-  navigateTo("/");
+  router.push("/");
 };
 </script>
 

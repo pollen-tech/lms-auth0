@@ -8,7 +8,7 @@
         elevation="0"
         class="align-center my-4"
       >
-        <v-form ref="form">
+        <v-form ref="formRef">
           <div class="my-2 text-start flex-1-0">
             <div class="d-flex">
               <label class="d-flex font-weight-medium"
@@ -56,7 +56,9 @@
             </label>
             <v-combobox
               v-model="item.types"
-              :items="sellerStore.companyType"
+              :items="sellerStore.sellerCompanyTypes"
+              item-value="id"
+              item-title="name"
               :return-object="false"
               placeholder="Select Company Type"
               variant="outlined"
@@ -118,36 +120,18 @@
                 </v-tooltip>
               </label>
             </div>
-
-            <v-row>
-              <v-col>
-                <v-autocomplete
-                  v-model="item.country"
-                  item-value="id"
-                  item-title="name"
-                  :items="[]"
-                  :return-object="false"
-                  placeholder="Choose One"
-                  variant="outlined"
-                  :rules="required"
-                  clearable
-                  @update:model-value="fetchCity"
-              /></v-col>
-              <v-col>
-                <v-autocomplete
-                  v-model="item.city"
-                  item-value="id"
-                  item-title="name"
-                  :items="cities"
-                  :return-object="false"
-                  placeholder="Choose One"
-                  hint="*Optional"
-                  variant="outlined"
-                  :disabled="!item.country"
-                  persistent-hint
-                ></v-autocomplete
-              ></v-col>
-            </v-row>
+            <v-autocomplete
+              v-model="item.country"
+              item-value="id"
+              item-title="name"
+              :items="countries"
+              :return-object="true"
+              placeholder="Choose One"
+              variant="outlined"
+              :rules="required"
+              clearable
+              @update:model-value="fetchCity"
+            />
           </div>
           <div class="mb-2 mt-4 text-start flex-1-0">
             <label class="font-weight-medium"
@@ -155,15 +139,14 @@
               <span class="red--text">*</span></label
             >
             <v-autocomplete
-              v-model="item.companyType"
+              v-model="item.liquidate"
               item-value="id"
               item-title="name"
-              :items="[]"
-              :return-object="false"
+              :items="sellerStore.sellerLiquidate"
+              :return-object="true"
               placeholder="Choose Multiple"
               variant="outlined"
               :rules="required"
-              multiple
               clearable
             />
           </div>
@@ -188,6 +171,7 @@
             </template>
           </v-checkbox>
           <v-btn
+            :disabled="!checkAcceptTerms"
             class="my-4 me-auto text-capitalize rounded-lg"
             color="#8431E7"
             block
@@ -228,49 +212,75 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useSellerStore } from '~/stores/seller';
+import { ref } from "vue";
+import { useSellerStore } from "~/stores/seller";
+import { useCountryStore } from "~/stores/country";
+import { lmsApi } from "~/services/api";
 
-const emit = defineEmits(['submit']);
+const emit = defineEmits(["submit"]);
+const props = defineProps({
+  userId: { type: String, default: "" },
+});
+
 const sellerStore = useSellerStore();
-const companyType = ref([
-  {
-    id: 1,
-    name: 'Type A',
-    title: 'Type A',
-    description: 'Description for Type A',
-  },
-  {
-    id: 2,
-    name: 'Type B',
-    title: 'Type B',
-    description: 'Description for Type B',
-  },
-  {
-    id: 3,
-    name: 'Type C',
-    title: 'Type C',
-    description: 'Description for Type C',
-  },
-]);
 
-const items = ref(['Programming', 'Design', 'Vue', 'Vuetify']);
+const countryStore = useCountryStore();
+const { countries } = storeToRefs(countryStore);
+
 const item = ref({ items: [] });
-const cities = ref([]);
-const required = [(v) => !!v || 'Field is required'];
+const required = [(v) => !!v || "Field is required"];
 const isLoading = ref(false);
 const showDialog = ref(false);
 const validateCompanyName = ref(0);
-const selectedItem = ref(null);
 const checkAcceptTerms = ref(false);
+const formRef = ref(null);
+
+onMounted(() => {
+  sellerStore.getCompanyTypes();
+  sellerStore.getLiquidateUnit();
+  countryStore.getCountries();
+});
 
 const fetchCity = () => {};
-const submit = () => {
-  emit('submit');
+const submit = async () => {
+  try {
+    const { valid } = await formRef.value.validate();
+    if (valid) {
+      const body = {
+        name: item.value.companyName,
+        company_type_id: item.value.types,
+        operation_country_id: item.value.country.id,
+        liquidate_unit_id: item.value.liquidate.id,
+        user_id: props.userId,
+      };
+      console.log(body);
+      const req = await lmsApi("/onboard-company", "POST", body);
+
+      if (req) {
+        emit("submit");
+      } else {
+        console.log(req);
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
 };
-const onValidateCompanyName = () => {
-  console.log(item.value);
-  validateCompanyName.value = 2;
+
+const onValidateCompanyName = async () => {
+  try {
+    const req = await sellerStore.validateCompanyNameExist(
+      item.value.companyName
+    );
+
+    if (req?.id) {
+      validateCompanyName.value = 2;
+    } else {
+      validateCompanyName.value = 1;
+    }
+  } catch (err) {
+    console.log(err);
+  }
 };
 const checkTerms = () => {};
 </script>
@@ -285,8 +295,8 @@ const checkTerms = () => {};
 
 /* Optional: Customize the tooltip arrow */
 .custom-icon .v-overlay__content::after {
-  content: '◀'; /* Unicode arrow left character */
-  font-family: 'Material Icons'; /* Material Icons font family */
+  content: "◀"; /* Unicode arrow left character */
+  font-family: "Material Icons"; /* Material Icons font family */
   color: #6b7280; /* Match this with your tooltip background color */
   position: absolute;
   top: 55%;

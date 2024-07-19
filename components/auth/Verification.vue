@@ -142,6 +142,7 @@ const timerRunning = ref(false);
 const timerInterval = ref(null);
 
 const submit = () => {
+  isLoading.value = true;
   emit("verifyOtpEvent", otp.value);
 };
 const formatTime = computed(() => {
@@ -154,7 +155,7 @@ const formatTime = computed(() => {
 });
 
 const startTimer = () => {
-  if (timerRunning.value) {
+  if (!timerRunning.value) {
     timerRunning.value = true;
     timerInterval.value = setInterval(updateTimer, 1000);
   }
@@ -171,13 +172,9 @@ const updateTimer = () => {
 
 const resendOtp = async () => {
   remainingTime.value = totalTime.value;
-  await emit("sendOtpEvent");
+  await emit("sendOtpEvent", props.email);
   startTimer();
   otp.value = "";
-};
-
-const previousPage = () => {
-  navigateTo("/auth/login");
 };
 </script>
 <style>

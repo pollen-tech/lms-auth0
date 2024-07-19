@@ -36,13 +36,21 @@ export const useAuth = () => {
     return null;
   };
 
-  const isUserAuthenticated = () => {
+  const isTokenExpired = () => {
     if (typeof window !== "undefined") {
       const expiresAt = localStorage.getItem("expires_at");
       if (!expiresAt) {
-        return false;
+        return true;
       }
-      return new Date().getTime() < JSON.parse(expiresAt);
+      return new Date().getTime() > JSON.parse(expiresAt);
+    }
+    return true;
+  };
+
+  const isUserAuthenticated = () => {
+    if (typeof window !== "undefined") {
+      const accessToken = localStorage.getItem("access_token");
+      return accessToken !== null && !isTokenExpired();
     }
     return false;
   };
