@@ -48,10 +48,10 @@ export const lmsApi = async (
   }
 
   try {
-    const fetchData = await fetch(
-      new URL(url, config.public.lmsBackendUrl),
-      init
+    const combinedUrl = new URL(
+      config.public.lmsBackendUrl.replace(/\/$/, "") + url
     );
+    const fetchData = await fetch(combinedUrl, init);
 
     if (fetchData.status !== 204) {
       return await fetchData.json();

@@ -36,7 +36,7 @@ export const useAuth = () => {
     return null;
   };
 
-  const isTokenExpired = () => {
+  const is_token_expired = () => {
     if (typeof window !== "undefined") {
       const expiresAt = localStorage.getItem("expires_at");
       if (!expiresAt) {
@@ -50,7 +50,7 @@ export const useAuth = () => {
   const is_user_authenticated = () => {
     if (typeof window !== "undefined") {
       const accessToken = localStorage.getItem("access_token");
-      return accessToken !== null && !isTokenExpired();
+      return accessToken !== null && !is_token_expired();
     }
     return false;
   };
@@ -73,6 +73,7 @@ export const useAuth = () => {
     get_user_id,
     handleAuth0Response,
     is_user_authenticated,
+    is_token_expired,
     getToken,
   };
 };
