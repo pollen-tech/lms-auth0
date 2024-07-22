@@ -42,7 +42,7 @@
             ></v-text-field>
           </div>
           <v-checkbox
-            v-model="checkAcceptTerms"
+            v-model="check_accept_terms"
             hide-details
             @change="checkTerms()"
           >

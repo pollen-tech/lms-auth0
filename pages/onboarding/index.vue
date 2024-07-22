@@ -60,7 +60,7 @@ onMounted(async () => {
   const req = await get_company_profile(user_id);
   if (!req?.id) {
     is_loading.value = false;
-    is_user_onboard.value = true;
+    is_user_onboard.value = false;
   } else {
     is_loading.value = false;
   }

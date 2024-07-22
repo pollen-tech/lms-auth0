@@ -122,7 +122,7 @@
       </v-skeleton-loader>
     </v-app-bar>
     <v-navigation-drawer
-      v-if="showSideNav && is_authenticated"
+      v-if="show_side_nav && is_authenticated"
       v-model="drawer"
       :rail="rail"
       :permanent="!$vuetify.display.mobile"
@@ -319,11 +319,14 @@ const is_authenticated = computed(() => {
   return is_user_authenticated();
 });
 
-onMounted(async () => {
+const show_side_nav = computed(() => {
   if (excludeSideNav.value.includes(currentUrl.value)) {
-    showSideNav.value = false;
+    return false;
   }
-  console.log(is_authenticated.value);
+  return true;
+});
+
+onMounted(async () => {
   setTimeout(() => {
     loading.value = false;
   }, 800);
