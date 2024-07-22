@@ -13,13 +13,13 @@
       </v-col>
       <v-col cols="12" md="8">
         <div class="ma-8">
-          <AuthLogin v-if="!isEmailSent" @submit="sendOtp" />
+          <AuthLogin v-if="!isEmailSent" @submit="send_otp" />
           <AuthVerification
             v-else
             :email="email"
-            @previous-page="goToLogin"
-            @verify-otp-event="verifyOtp"
-            @send-otp-event="sendOtp"
+            @previous-page="go_to_login"
+            @verify-otp-event="verify_otp"
+            @send-otp-event="send_otp"
           />
         </div>
       </v-col>
@@ -57,10 +57,10 @@ onMounted(() => {
     if (is_authenticated.value) {
       router.push("/");
     }
-  }, 2000);
+  }, 800);
 });
 
-const verifyOtp = async (param) => {
+const verify_otp = async (param) => {
   try {
     otp.value = param;
     isOtpValid.value = true;
@@ -80,7 +80,7 @@ const verifyOtp = async (param) => {
     if (req) {
       auth.handleAuth0Response(req);
       isEmailSent.value = true;
-      goToRedirect();
+      go_to_redirect();
     } else {
       console.log(req);
     }
@@ -89,11 +89,11 @@ const verifyOtp = async (param) => {
   }
 };
 
-const goToLogin = () => {
+const go_to_login = () => {
   isEmailSent.value = false;
 };
 
-const sendOtp = async (param) => {
+const send_otp = async (param) => {
   try {
     email.value = param;
     isOtpValid.value = true;
@@ -108,9 +108,7 @@ const sendOtp = async (param) => {
     console.log(err);
   }
 };
-const goToRedirect = () => {
-  // navigateTo("/redirect");
-
+const go_to_redirect = () => {
   navigateTo("/onboarding");
 };
 </script>

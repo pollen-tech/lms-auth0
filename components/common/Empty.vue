@@ -12,12 +12,12 @@
         variant="outlined"
         class="my-4 mx-2 me-auto text-capitalize"
         color="purple-darken-3"
-        @click="goToLogin"
+        @click="on_login"
         >Login</v-btn
       >
       <v-btn
         class="my-4 mx-2 me-auto text-capitalize bg-purple-darken-3"
-        @click="goToLogin"
+        @click="on_login"
         >Sign Up with Pollen Pass</v-btn
       >
     </div>
@@ -35,6 +35,9 @@ const props = defineProps({
   },
 });
 
+const on_login = () => {
+  navigateTo("/auth/login");
+};
 const phoneLocal = ref("");
 const salesTeamNumber = ref("");
 </script>

@@ -38,7 +38,7 @@
               v-model="email"
               variant="outlined"
               placeholder="Enter Email"
-              :rules="requiredEmail"
+              :rules="required_email"
             ></v-text-field>
           </div>
           <v-checkbox
@@ -62,11 +62,11 @@
             </template>
           </v-checkbox>
           <v-btn
-            :disabled="!checkAcceptTerms"
+            :disabled="!check_accept_terms"
             class="my-4 me-auto text-capitalize rounded-lg"
             color="#8431E7"
             block
-            :loading="isLoading"
+            :loading="is_loading"
             @click="submit"
             >Continue</v-btn
           >
@@ -74,7 +74,7 @@
       </v-card>
 
       <v-dialog
-        v-model="showDialog"
+        v-model="show_dialog"
         persistent
         class="mx-auto pa-2"
         :width="$vuetify.display.mobile ? 'auto' : '550'"
@@ -113,23 +113,23 @@ const notification = ref({
   desc: "Pollen Pass is Pollen’s free buyer membership program. By signing up as a Pollen Pass member on Pollen Save. Pollen Save delivers excess or discontinued products from global brands direct to your doorstep. Whether you're looking for shampoo, conditioner, face wash, make up, toys, shoes, or more - there's something for everyone at unbeatable prices on Pollen Save!",
 });
 const email = ref("");
-const requiredEmail = [
+const required_email = [
   (v) =>
     /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
     "E-mail must be valid",
 ];
-const isLoading = ref(false);
-const showDialog = ref(false);
-const checkAcceptTerms = ref(false);
+const is_loading = ref(false);
+const show_dialog = ref(false);
+const check_accept_terms = ref(false);
 const formRef = ref(null);
 
 const submit = async () => {
-  isLoading.value = true;
+  is_loading.value = true;
   const { valid } = await formRef.value.validate();
   if (valid) {
     emit("submit", email.value);
   }
-  isLoading.value = false;
+  is_loading.value = false;
 };
 
 const checkTerms = () => {};

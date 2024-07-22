@@ -1,7 +1,7 @@
 <template>
   <div class="h-100">
-    <CommonLoading v-if="isLoading" :loading="true" />
-    <div v-if="!isUserOnboard">
+    <CommonLoading v-if="is_loading" :loading="true" />
+    <div v-if="!is_user_onboard">
       <OnboardingHeader />
       <v-container>
         <div class="d-flex justify-space-between my-6">
@@ -25,8 +25,8 @@
           <v-col cols="12" md="7" class="d-flex justify-center">
             <div class="w-75 d-flex flex-column h-100 py-8 mt-10">
               <OnboardingCompanyInformation
-                :user-id="userId"
-                @submit="goToHomePage"
+                :user-id="user_id"
+                @submit="go_to_homepage"
               />
             </div>
           </v-col>
@@ -52,20 +52,20 @@ const user_id = get_user_id();
 
 const { get_company_profile } = useSellerStore();
 
-const isLoading = ref(false);
-const isUserOnboard = ref(true);
+const is_loading = ref(false);
+const is_user_onboard = ref(true);
 
 onMounted(async () => {
-  isLoading.value = true;
+  is_loading.value = true;
   const req = await get_company_profile(user_id);
   if (!req?.id) {
-    isLoading.value = false;
-    isUserOnboard.value = true;
+    is_loading.value = false;
+    is_user_onboard.value = true;
   } else {
-    isLoading.value = false;
+    is_loading.value = false;
   }
 });
-const goToHomePage = () => {
+const go_to_homepage = () => {
   router.push("/");
 };
 </script>

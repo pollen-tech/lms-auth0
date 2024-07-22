@@ -276,7 +276,7 @@ import { useSellerStore } from "~/stores/seller";
 import { CHANNEL } from "~/utils/constant";
 
 const props = defineProps({
-  dialog_value: { type: String, default: false },
+  dialog_value: { type: Boolean, default: false },
   user_id: { type: String, default: "" },
 });
 const emit = defineEmits(["close"]);

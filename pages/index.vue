@@ -11,7 +11,7 @@
           </template>
         </v-breadcrumbs>
         <v-row
-          v-if="user_authenticated"
+          v-if="!is_authenticated"
           style="background-color: #faf5ff"
           class="rounded-lg align-center pa-4 pb-6 mx-2"
         >
