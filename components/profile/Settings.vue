@@ -213,7 +213,7 @@
                             <div>
                               <p class="font-weight-bold">Pollen Pass ID #:</p>
                               <p class="font-weight-bold">
-                                {{ profile?.id }}
+                                {{ profile?.auth_id }}
                               </p>
                             </div>
                             <div>
@@ -291,7 +291,7 @@ const dialogVisible = ref(false);
 const phoneValid = ref(true);
 const isAvailable = ref(false);
 const profile = ref({
-  id: "",
+  auth_id: "",
   first_name: "",
   last_name: "",
   country_code: "",
@@ -308,8 +308,8 @@ onMounted(async () => {
   // await getUserInfo(""); TODO
 });
 onUpdated(async () => {
-  console.log(props.dialog_value && !profile.value.id);
-  if (props.dialog_value && !profile.value.id) {
+  console.log(props.dialog_value && !profile.value.auth_id);
+  if (props.dialog_value && !profile.value.auth_id) {
     await get_profile();
   }
 });
@@ -318,7 +318,7 @@ const get_profile = async () => {
   const req = await get_user_profile(props.user_id);
   if (req) {
     if (JSON.stringify(profile.value) !== JSON.stringify(req)) {
-      profile.value = req;
+      profile.value = req.data ? req.data : req;
       console.log(profile.value);
     }
   }

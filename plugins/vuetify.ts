@@ -22,7 +22,6 @@ const LMSTheme = {
 
 export default defineNuxtPlugin((nuxtApp) => {
   const vuetify = createVuetify({
-    ssr: false,
     theme: {
       defaultTheme: "LMSTheme",
       themes: {

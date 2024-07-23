@@ -1,16 +1,5 @@
-import { ref } from "vue";
-import { Auth0Client } from "@auth0/auth0-spa-js";
-
 export const useAuth = () => {
   const runtimeConfig = useRuntimeConfig();
-  const auth0 = new Auth0Client({
-    domain: runtimeConfig.public.auth0_domain,
-    clientId: runtimeConfig.public.auth0_client_id,
-    authorizationParams: {
-      redirect_uri: runtimeConfig.public.auth0_redirect_uri,
-    },
-    cacheLocation: "localstorage",
-  });
 
   const handleAuth0Response = (response: {
     access_token: string;
@@ -55,25 +44,24 @@ export const useAuth = () => {
     return false;
   };
 
-  const getToken = async () => {
-    try {
-      const accessToken = await auth0.getTokenSilently();
-      console.log(accessToken);
-      return accessToken;
-    } catch (error: any) {
-      console.error("Error getting token silently:", error);
-      if (error?.error === "login_required") {
-        await auth0.loginWithRedirect();
-      }
-      return null;
-    }
-  };
+  // const getToken = async () => {
+  //   try {
+  //     const accessToken = await auth0.getTokenSilently();
+  //     console.log(accessToken);
+  //     return accessToken;
+  //   } catch (error: any) {
+  //     console.error("Error getting token silently:", error);
+  //     if (error?.error === "login_required") {
+  //       await auth0.loginWithRedirect();
+  //     }
+  //     return null;
+  //   }
+  // };
 
   return {
     get_user_id,
     handleAuth0Response,
     is_user_authenticated,
     is_token_expired,
-    getToken,
   };
 };

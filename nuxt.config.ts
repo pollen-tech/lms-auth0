@@ -5,6 +5,8 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
   app: {
+    baseURL: "/",
+    buildAssetsDir: "/_nuxt/",
     head: {
       title: "Pollen LMS",
       htmlAttrs: {
@@ -18,6 +20,14 @@ export default defineNuxtConfig({
           href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap",
         },
       ],
+    },
+  },
+  nitro: {
+    runtimeConfig: {
+      app: {
+        baseURL: "/",
+        buildAssetsDir: "_nuxt",
+      },
     },
   },
   build: {
