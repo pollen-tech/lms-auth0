@@ -76,7 +76,7 @@
                 <v-breadcrumbs
                   class="text-caption text-capitalize"
                   color="deep-purple-accent-4"
-                  :items="[company.name, 'Contact Information']"
+                  :items="[company.name, 'Company Information']"
                 >
                   <template #prepend>
                     <v-icon size="small" color="#782CD1">mdi-home</v-icon>

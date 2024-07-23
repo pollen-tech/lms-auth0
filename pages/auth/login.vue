@@ -24,6 +24,7 @@
         </div>
       </v-col>
     </v-row>
+    <NotificationStatus />
   </div>
 </template>
 
@@ -32,6 +33,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { lmsApi } from "~/services/api";
 import { useAuth } from "~/composables/auth0";
+import { useCommonStore } from "~/stores/common";
 
 definePageMeta({
   layout: false,
@@ -40,6 +42,7 @@ definePageMeta({
 
 const router = useRouter();
 const auth = useAuth();
+const commonStore = useCommonStore();
 
 const isEmailSent = ref(false);
 const email = ref("");
@@ -82,6 +85,7 @@ const verify_otp = async (param) => {
       isEmailSent.value = true;
       go_to_redirect();
     } else {
+      getErrorMessage(req);
       console.log(req);
     }
   } catch (err) {
@@ -107,6 +111,25 @@ const send_otp = async (param) => {
   } catch (err) {
     console.log(err);
   }
+};
+
+const getErrorMessage = (req) => {
+  let errorMsg = req.message;
+  if (typeof req.message !== "string") {
+    const formattedMessages = req.message.map((message) => {
+      const words = message.split(" ");
+      words[0] = "• " + words[0];
+      return words.join(" ");
+    });
+
+    errorMsg = formattedMessages.join(",<br/>");
+  }
+
+  commonStore.setShowNotification({
+    display: true,
+    status: "error",
+    msg: errorMsg,
+  });
 };
 const go_to_redirect = () => {
   navigateTo("/onboarding");

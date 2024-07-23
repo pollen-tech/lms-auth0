@@ -93,12 +93,11 @@
                     <v-row>
                       <v-col class="ma-2">
                         <p class="font-weight-bold text-body-1 mb-6">
-                          Company Information
+                          Contact Information
                         </p>
                         <v-sheet class="bg-white pa-6">
                           <p class="font-weight-bold text-body-1 mb-6">
-                            Company Information
-                            <span class="text-caption"> (Not Available)</span>
+                            Contact Information
                           </p>
                           <div class="my-2">
                             <label class="font-weight-medium text-body-2"

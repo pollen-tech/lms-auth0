@@ -87,7 +87,7 @@ const showDialog = async () => {
 const onSignUp = () => {};
 
 onMounted(() => {
-  showDialog();
+  // showDialog();
 });
 </script>
 

@@ -112,11 +112,11 @@
           class="d-flex flex-column ma-2"
         >
           <h5>
-            {{ userProfile?.firstName || userProfile?.name }}
+            {{ prolfile?.first_name || prolfile?.name }}
           </h5>
           <h6 v-if="userProfile?.id" class="font-weight-regular">
             Member ID:
-            {{ userProfile?.id }}
+            {{ profile?.id }}
           </h6>
         </div>
       </v-skeleton-loader>
@@ -168,9 +168,12 @@
                 class="text-body-2 multiline-text text-white"
                 style="width: 160px"
               >
-                {{ userProfile?.name || "" }}
+                {{ prolfile?.first_name || "" }}
+                {{ prolfile?.last_name || "" }}
               </div>
-              <div class="text-caption">{{ title }}</div>
+              <v-chip class="ma-2" variant="outlined" size="x-small"
+                >{{ company?.name }}
+              </v-chip>
             </div>
           </div>
         </template>
@@ -266,13 +269,13 @@
         <ProfileSettings
           v-model="dialogVisible"
           :dialog_value="dialogVisible"
-          :user_id="userId"
+          :user_id="user_id"
           @close="dialogVisible = false"
         />
         <CompanySettings
           v-model="dialogVisibleCompany"
           :dialog_value="dialogVisibleCompany"
-          :user_id="userId"
+          :user_id="user_id"
           @close="dialogVisibleCompany = false"
         />
       </div>
@@ -290,6 +293,7 @@ import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { useAuth } from "~/composables/auth0";
 import { useSidebarStore } from "~/stores/sidebar";
+import { useSellerStore } from "~/stores/seller";
 
 import { useNuxtApp } from "#app";
 
@@ -298,10 +302,13 @@ const route = useRoute();
 const runtimeConfig = useRuntimeConfig();
 
 const { is_user_authenticated, get_user_id } = useAuth();
-const userId = get_user_id();
+const user_id = get_user_id();
 
 const sidebarStore = useSidebarStore();
 const sidebar = sidebarStore.sidebarData;
+
+const seller_store = useSellerStore();
+const { get_company_profile, get_user_profile } = seller_store;
 
 const currentUrl = computed(() => route.fullPath);
 const userProfile = ref({ id: null });
@@ -318,7 +325,16 @@ const dialogVisibleCompany = ref(false);
 const is_authenticated = computed(() => {
   return is_user_authenticated();
 });
+const company = ref({
+  id: "",
+  name: "",
+});
 
+const profile = ref({
+  auth_id: "",
+  first_name: "",
+  last_name: "",
+});
 const show_side_nav = computed(() => {
   if (excludeSideNav.value.includes(currentUrl.value)) {
     return false;
@@ -327,11 +343,29 @@ const show_side_nav = computed(() => {
 });
 
 onMounted(async () => {
+  await get_company();
+  await get_profile();
   setTimeout(() => {
     loading.value = false;
   }, 800);
 });
 
+const get_company = async () => {
+  const req = await get_company_profile(user_id);
+  if (req) {
+    if (JSON.stringify(company.value) !== JSON.stringify(req)) {
+      company.value = req;
+    }
+  }
+};
+const get_profile = async () => {
+  const req = await get_user_profile(user_id);
+  if (req) {
+    if (JSON.stringify(profile.value) !== JSON.stringify(req)) {
+      profile.value = req.data ? req.data : req;
+    }
+  }
+};
 const showProfileSetting = () => {
   dialogVisible.value = true;
 };

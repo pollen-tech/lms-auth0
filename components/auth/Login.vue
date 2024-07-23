@@ -128,8 +128,10 @@ const submit = async () => {
   const { valid } = await formRef.value.validate();
   if (valid) {
     emit("submit", email.value);
+    setTimeout(() => {
+      is_loading.value = false;
+    }, 1500);
   }
-  is_loading.value = false;
 };
 
 const checkTerms = () => {};
