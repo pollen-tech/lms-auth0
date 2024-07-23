@@ -283,7 +283,7 @@ const emit = defineEmits(["close"]);
 const runtimeConfig = useRuntimeConfig();
 
 const seller_store = useSellerStore();
-const { get_user_profile } = seller_store;
+const { get_user_profile, get_user_profile_channel } = seller_store;
 
 const tab = ref(null);
 const dialogVisible = ref(false);
@@ -305,11 +305,14 @@ const required = [(v) => !!v || "Field is required"];
 
 onMounted(async () => {
   // await getUserInfo(""); TODO
+  console.log(profile);
+  console.log(profile.value);
 });
 onUpdated(async () => {
   console.log(props.dialog_value && !profile.value.auth_id);
   if (props.dialog_value && !profile.value.auth_id) {
     await get_profile();
+    await get_profile_channel();
   }
 });
 
@@ -318,7 +321,15 @@ const get_profile = async () => {
   if (req) {
     if (JSON.stringify(profile.value) !== JSON.stringify(req)) {
       profile.value = req.data ? req.data : req;
-      console.log(profile.value);
+      //console.log(profile.value);
+    }
+  }
+};
+const get_profile_channel = async () => {
+  const req = await get_user_profile_channel(props.user_id);
+  if (req) {
+    if (JSON.stringify(profile.value) !== JSON.stringify(req)) {
+      profile.value.channel = req.data ? req.data[0].channel : req[0].channel;
     }
   }
 };
