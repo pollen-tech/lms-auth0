@@ -1,53 +1,39 @@
 <template>
-  <div class="landing-bg h-100">
-    <v-container>
-      <v-card elevation="0" class="px-1">
-        <v-breadcrumbs
-          class="text-caption text-purple text-capitalize mb-2"
-          :items="['home']"
-        >
-          <template #prepend>
-            <v-icon size="small">mdi-home</v-icon>
-          </template>
-        </v-breadcrumbs>
-        <v-row
-          v-if="!is_authenticated"
-          style="background-color: #faf5ff"
-          class="rounded-lg align-center pa-4 pb-6 mx-2"
-        >
-          <v-col cols="1">
-            <img src="../assets/image/pollen-pass-original.svg" class="mx-4" />
-          </v-col>
-          <v-col cols="11" md="8">
-            <p class="font-weight-bold text-body-2 mb-1">
-              Log in/Sign Up to your Pollen Pass account and start Selling with
-              Pollen's Liquidation Management System
-            </p>
-            <p class="text-body-2">
-              Sign up and get a free LMS account to start listing excess and
-              obsolete inventory, and receive offers from Pollen's verified
-              buyers around the world. Not a member?
-              <a href="#" class="text-purple"> Sign Up now</a>
-            </p>
-          </v-col>
-          <v-col cols="12" md="3">
-            <v-btn
-              variant="outlined"
-              elevation="0"
-              size="small"
-              class="text-capitalize"
-              @click="onSignUp"
-            >
-              Sign Up with Pollen Pass</v-btn
-            >
-          </v-col>
-        </v-row>
-      </v-card>
+  <!--not_authenticate-->
+  <div>
+    <div v-if="!is_authenticated" class="home-bg h-100">
+      <LandingBanner />
+      <LandingTopContent />
 
-      <CommonEmpty :user_authenticated="is_authenticated" />
-    </v-container>
+      <v-container>
+        <v-card elevation="0" class="px-1" style="background-color: transparent">
+          
+          <LandingFeatureList />
+          <LandingTextWImage />
 
-    <CommonConfirm ref="confirm" />
+        </v-card>
+
+      </v-container>
+
+      <CommonConfirm ref="confirm" />
+    </div>
+
+
+
+
+    <!--authenticated-->
+    <div v-else>
+      <v-container>
+        <v-card elevation="0" class="px-1">
+          <LandingBanner />
+
+          
+        </v-card>
+
+        <!--<CommonEmpty />-->
+        {{ console.log('is_authenticated: ', is_authenticated) }}
+      </v-container>
+    </div>
   </div>
 </template>
 
@@ -91,4 +77,5 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+</style>
