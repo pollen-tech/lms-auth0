@@ -6,7 +6,7 @@
 		<v-col>
 			<v-sheet class="pa-2 ma-2">
 				<p class="text_w_image_sub">Pollen Pass on Pollen LMS</p>
-				<h2 class="text_w_image_title">How to Start Selling with Pollen's Liquidation <br/>Management System</h2>
+				<h2 class="text_w_image_title text-h6 text-xs-h5 text-sm-h4">How to Start Selling with Pollen's Liquidation <br/>Management System</h2>
 				<div class="text_w_image_img"><img src="~/assets/image/lms_image_men_safe.jpg" alt="" width="100%" height="100%"></div>
 				<p class="text_w_image_para">Sign up and get a free LMS account to start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world</p>
 			</v-sheet>
@@ -80,7 +80,7 @@ const onSignUp = () => {
 			font-weight: 700;
 			line-height: 40px; /* 125% */
 			letter-spacing: -0.64px;
-			margin-bottom: 10p;
+			margin-bottom: 10px;
 		}	
 		&_sub {
 			color: var(--primary-purple-500-main, #8431E7);
@@ -114,6 +114,21 @@ const onSignUp = () => {
 			border-radius: 20px;
 			overflow: hidden;
 			margin: 20px 0;
+		}
+	}
+	@media (max-width: 550px) {
+		.text_w_image {
+
+			&_img {
+				width: 100%;
+				height: 100px;
+
+				img {
+					width: 100%;
+					height: 100%;
+				}
+			}
+
 		}
 	}
 </style>

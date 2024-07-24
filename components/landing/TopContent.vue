@@ -4,8 +4,8 @@
 			<v-row
 				class="align-center pa-4 pb-6 mx-2"
 			>
-				<v-col cols="4">
-					<h1 class="topcontent_title font-weight-bold">Liquidation <br/> Management <br/> System</h1>
+				<v-col xs="12" sm="4">
+					<h1 class="topcontent_title font-weight-bold text-h4 text-md-h2 text-sm-h3">Liquidation <br/> Management <br/> System</h1>
 					<p class="topcontent_sub">PREDICT - PLAN - PRIORITIZE</p>
 					<p class="topcontent_para">Avoid business waste and destruction by automating workstreams, unlocking the power of pricing analytics, and empowering teams to take action for more sustainable outcomes.
 					</p>
@@ -17,7 +17,7 @@
 					>
 				</v-col>
 
-				<v-col cols="6" md="8" class="topcontent_img">
+				<v-col xs="12" sm="8" class="topcontent_img">
 					<img src="~/assets/image/lms_banner_people.png" alt="delivery_guy">
 				</v-col>
 			</v-row>

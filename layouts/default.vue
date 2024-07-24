@@ -1,5 +1,8 @@
 <template>
-  <v-layout class="rounded rounded-md" :class="is_authenticated ? 'auth' : 'not_auth'">
+  <!--<v-layout :class="is_authenticated ? 'auth' : 'not_auth'">-->
+    <v-layout :class="{ 'auth': isAuthenticated, 'not_auth': !isAuthenticated }">
+  
+    <CommonLoading v-if="is_loading" :loading="true" />
     <v-app-bar
       fixed
       app
@@ -12,14 +15,14 @@
       />
       <div>
         <v-list-item class="pl-1">
-          <v-list-item-title v-if="is_authenticated" class="d-flex align-center">
+          <v-list-item-title v-if="isAuthenticated" class="d-flex align-center">
             <img src="../assets/image/pollen-lms.svg" />
 
             <p
               v-if="!$vuetify.display.mobile"
               class="font-weight-bold text-caption ml-1"
             >
-              {{ title }}
+              {{ title }}{{ 'ok' }}
             </p>
           </v-list-item-title>
           <v-list-item-title v-else class="d-flex align-center">
@@ -35,7 +38,7 @@
         </v-list-item>
       </div>
       <v-spacer />
-      <v-skeleton-loader :loading="loading" type="list-item-two-line">
+      <v-skeleton-loader :loading="is_loading" type="list-item-two-line">
         <v-menu v-if="$vuetify.display.mobile && !is_authenticated">
           <template #activator="{ props }">
             <div>
@@ -333,9 +336,11 @@ const loading = ref(true);
 const showSideNav = ref(true);
 const excludeSideNav = ref(["/onboarding"]);
 const dialogVisibleCompany = ref(false);
+const is_loading = ref(false);
 const is_authenticated = computed(() => {
   return is_user_authenticated();
 });
+const isAuthenticated = ref(false);
 const company = ref({
   id: "",
   name: "",
@@ -354,11 +359,23 @@ const show_side_nav = computed(() => {
 });
 
 onMounted(async () => {
+
   await get_company();
   await get_profile();
-  setTimeout(() => {
-    loading.value = false;
-  }, 800);
+  isAuthenticated.value = is_user_authenticated();
+
+  //setInterval(() => {
+  //  console.log('is_authenticated',is_authenticated.value);
+  //}, 800);
+
+  //is_loading.value = true;
+  //const req_company = await get_company();
+  //const req_profile = await get_profile();
+  //if (!req_company && !req_profile) {
+  //  is_loading.value = false;
+  //} else {
+  //  is_loading.value = true;
+  //}
 });
 
 const get_company = async () => {

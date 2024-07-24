@@ -3,7 +3,7 @@
 		align="start"
 		class="rounded-lg align-center pa-4 pb-6 mx-2 feature_list"
 	>
-	<v-col>
+	<v-col cols="12" sm="12" md="4" >
 		<v-sheet class="pa-2 ma-2 feature_list_sheet">
 			<h2 class="feature_list_title">01</h2>
 			<div class="feature_list_devide"></div>
@@ -11,7 +11,7 @@
 			<p class="feature_list_para">Understand recovery cost ranges by category, SKU, target market, and more thanks to Pollen's proprietary data over thousands of successful trades</p>
 		</v-sheet>
 	</v-col>
-	<v-col>
+	<v-col cols="12" sm="12" md="4">
 		<v-sheet class="pa-2 ma-2 feature_list_sheet">
 			<h2 class="feature_list_title">02</h2>
 			<div class="feature_list_devide"></div>
@@ -19,7 +19,7 @@
 			<p class="feature_list_para">Model offer and order scenarios intuitively and easily within Pollen's Liquidation Management System, to identify a data-backed path to sustainable liquidation.</p>
 		</v-sheet>
 	</v-col>
-	<v-col>
+	<v-col cols="12" sm="12" md="4">
 		<v-sheet class="pa-2 ma-2 feature_list_sheet">
 			<h2 class="feature_list_title">03</h2>
 			<div class="feature_list_devide"></div>

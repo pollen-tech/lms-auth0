@@ -1,14 +1,14 @@
 <template>
-	<div class="banner_container">
+	<div class="banner_container hidden-sm-and-down">
 		<v-container>
 			<v-row
 				style="background-color: #faf5ff"
 				class="rounded-lg align-center pa-4 pb-6 mx-2 my-0"
 			>
-				<v-col cols="1">
+				<v-col cols="3" md="1" sm="3" >
 					<img src="~/assets/image/pollen-pass-original.svg" class="mx-4" />
 				</v-col>
-				<v-col cols="11" md="8">
+				<v-col cols="8" md="8" sm="9">
 					<p class="font-weight-bold text-body-2 mb-1">
 						Log in/Sign Up to your Pollen Pass account and start Selling with
 						Pollen's Liquidation Management System
@@ -63,8 +63,4 @@ const height = computed(() => {
 // import { emptyPage } from '~/assets/image/empty-page.png';
 </script>
 
-<style lang="scss" scoped>
-	.banner_container {
-		background-color: #440F83;
-	}
-</style>
+<style lang="scss" scoped></style>
