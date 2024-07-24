@@ -3,35 +3,32 @@
 		align="start"
 		class="rounded-lg align-center pa-4 pb-6 mx-2 text_w_image"
 	>
-	<v-col>
-		<v-sheet class="pa-2 ma-2">
-			<p class="text_w_image_sub">Pollen Pass on Pollen LMS</p>
-			<h2 class="text_w_image_title">How to Start Selling with Pollen's Liquidation <br/>Management System</h2>
-			<div class="text_w_image_img"><img src="~/assets/image/lms_image_men_safe.jpg" alt=""></div>
-			<p class="text_w_image_para">Sign up and get a free LMS account to start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world</p>
-		</v-sheet>
-		
-	</v-col>
-	<v-col>
-		<v-sheet class="text-center align-center mx-auto"> 
-				<v-btn
-					v-if="!is_authenticated"
-					class="my-4 mx-2 me-auto text-capitalize bg-purple-darken-3"
-					@click="onSignUp()"
-					>Sign Up with Pollen Pass</v-btn
-				>
-				<v-btn
-					v-if="!is_authenticated"
-					variant="outlined"
-					class="my-4 mx-2 me-auto text-capitalize"
-					color="#374151"
-					@click="onLogin()"
-					style="background-color: #fff;"
-					>Login</v-btn
-				>
-		</v-sheet>
-	</v-col>
-		
+		<v-col>
+			<v-sheet class="pa-2 ma-2">
+				<p class="text_w_image_sub">Pollen Pass on Pollen LMS</p>
+				<h2 class="text_w_image_title">How to Start Selling with Pollen's Liquidation <br/>Management System</h2>
+				<div class="text_w_image_img"><img src="~/assets/image/lms_image_men_safe.jpg" alt="" width="100%" height="100%"></div>
+				<p class="text_w_image_para">Sign up and get a free LMS account to start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world</p>
+			</v-sheet>
+
+			<v-sheet class="text-center align-center mx-auto"> 
+					<v-btn
+						v-if="!is_authenticated"
+						class="my-4 mx-2 me-auto text-capitalize bg-purple-darken-3"
+						@click="onSignUp()"
+						>Sign Up with Pollen Pass</v-btn
+					>
+					<v-btn
+						v-if="!is_authenticated"
+						variant="outlined"
+						class="my-4 mx-2 me-auto text-capitalize"
+						color="#374151"
+						@click="onLogin()"
+						style="background-color: #fff;"
+						>Login</v-btn
+					>
+			</v-sheet>
+		</v-col>
 	</v-row>
 </template>
 
@@ -59,6 +56,13 @@ const height = computed(() => {
 
   return undefined;
 });
+const onLogin = () => {
+  navigateTo("/auth/login");
+};
+
+const onSignUp = () => {
+  navigateTo("/auth/login");
+};
 </script>
 
 <style lang="scss" scoped>
