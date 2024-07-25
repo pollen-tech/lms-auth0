@@ -105,14 +105,20 @@
               <v-list density="compact">
                 <v-list-item
                   class="text-grey-darken-1 text-body-2"
-                  @click="showProfileSetting()"
+                  @click="show_profile_setting()"
                 >
                   <v-icon>mdi-account-details-outline</v-icon> Profile
+                </v-list-item>
+                <v-list-item
+                  class="text-grey-darken-1 text-body-2"
+                  @click="show_company_setting()"
+                >
+                  Company Settings
                 </v-list-item>
                 <v-list-item>
                   <NuxtLink
                     class="text-grey-darken-1 text-body-2 cursor-pointer text-decoration-none"
-                    @click="onLogout()"
+                    @click="displayLogoutDialog = true"
                   >
                     <v-icon>mdi-logout</v-icon> Logout
                   </NuxtLink>
@@ -126,11 +132,15 @@
           class="d-flex flex-column ma-2"
         >
           <h5>
-            {{ prolfile?.first_name || prolfile?.name }}
+            {{
+              profile?.first_name
+                ? profile.first_name + " " + profile.last_name
+                : "- -"
+            }}
           </h5>
-          <h6 v-if="userProfile?.id" class="font-weight-regular">
+          <h6 class="font-weight-regular">
             Member ID:
-            {{ profile?.id }}
+            {{ profile?.auth_id || "-" }}
           </h6>
         </div>
       </v-skeleton-loader>
@@ -281,24 +291,81 @@
       <div class="h-100 w-100 overflow-hidden">
         <slot :user_authenticated="is_authenticated" />
         <ProfileSettings
-          v-model="dialogVisible"
-          :dialog_value="dialogVisible"
+          v-model="dialog_visible"
+          :dialog_value="dialog_visible"
           :user_id="user_id"
-          @close="dialogVisible = false"
+          @close="dialog_visible = false"
         />
         <CompanySettings
-          v-model="dialogVisibleCompany"
-          :dialog_value="dialogVisibleCompany"
+          v-model="dialog_company"
+          :dialog_value="dialog_company"
           :user_id="user_id"
-          @close="dialogVisibleCompany = false"
+          @close="dialog_company = false"
         />
       </div>
+      <v-dialog v-model="displayLogoutDialog">
+      <v-card
+        class="mx-auto pa-2"
+        :width="$vuetify.display.mobile ? 'auto' : '500'"
+      >
+        <v-card-item>
+          <div class="text-overline my-2 d-flex justify-space-between">
+            <div class="bg-purple-lighten-5 rounded-circle">
+              <v-icon size="large" color="purple-darken-2" class="ma-2"
+                >mdi-lightbulb-on-20</v-icon
+              >
+            </div>
+
+            <v-icon
+              size="large"
+              @click="displayLogoutDialog = false"
+              style="color: #6b7280"
+              >mdi-close</v-icon
+            >
+          </div>
+          <div class="pt-4">
+            <h4 style="color: #111827; font-size: 18px">
+              Are you sure you want to log out?
+            </h4>
+            <p class="py-2" style="color: #6b7280; font-size: 14px">
+              Logging out means you are about to leave this page, are you sure
+              you want to logout?
+            </p>
+          </div>
+        </v-card-item>
+        <v-card-text>
+          <div class="d-flex justify-end mt-2">
+            <v-btn
+              variant="outlined"
+              class="ma-2 text-capitalize"
+              @click="displayLogoutDialog = false"
+              style="color: #374151; font-size: 16px; letter-spacing: 0"
+              >Back</v-btn
+            >
+            <v-btn
+              variant="outlined"
+              class="ma-2 text-capitalize"
+              @click="onLogout()"
+              style="
+                background-color: #8431e7;
+                border: none;
+                color: #fff;
+                font-size: 16px;
+                letter-spacing: 0;
+              "
+              >Logout</v-btn
+            >
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
       <v-footer class="pa-0 w-100 d-flex justify-end bg-transparent">
         <p class="text-caption text-grey pr-4 pb-2">
           {{ title }} v{{ version }}
         </p>
       </v-footer>
     </v-main>
+
   </v-layout>
 </template>
 
@@ -322,7 +389,7 @@ const sidebarStore = useSidebarStore();
 const sidebar = sidebarStore.sidebarData;
 
 const seller_store = useSellerStore();
-const { get_company_profile, get_user_profile } = seller_store;
+const { get_user_profile } = seller_store;
 
 const currentUrl = computed(() => route.fullPath);
 const userProfile = ref({ id: null });
@@ -332,7 +399,6 @@ const zIndex = ref(999);
 const drawer = ref(true);
 const version = ref("2.0.0");
 const dialogVisible = ref(false);
-const loading = ref(true);
 const showSideNav = ref(true);
 const excludeSideNav = ref(["/onboarding"]);
 const dialogVisibleCompany = ref(false);
@@ -346,11 +412,11 @@ const company = ref({
   name: "",
 });
 
-const profile = ref({
-  auth_id: "",
-  first_name: "",
-  last_name: "",
-});
+const displayLogoutDialog = ref(false);
+const loading = ref(false);
+const profile = ref({});
+const dialog_visible = ref(false);
+const dialog_company = ref(false);
 const show_side_nav = computed(() => {
   if (excludeSideNav.value.includes(currentUrl.value)) {
     return false;
@@ -359,33 +425,21 @@ const show_side_nav = computed(() => {
 });
 
 onMounted(async () => {
-
-  await get_company();
-  await get_profile();
+  if (user_id) {
+  //await get_company();
+    await get_profile();
+  }
   isAuthenticated.value = is_user_authenticated();
-
-  //setInterval(() => {
-  //  console.log('is_authenticated',is_authenticated.value);
-  //}, 800);
-
-  //is_loading.value = true;
-  //const req_company = await get_company();
-  //const req_profile = await get_profile();
-  //if (!req_company && !req_profile) {
-  //  is_loading.value = false;
-  //} else {
-  //  is_loading.value = true;
-  //}
 });
 
-const get_company = async () => {
-  const req = await get_company_profile(user_id);
-  if (req) {
-    if (JSON.stringify(company.value) !== JSON.stringify(req)) {
-      company.value = req;
-    }
-  }
-};
+//const get_company = async () => {
+//  const req = await get_company_profile(user_id);
+//  if (req) {
+//    if (JSON.stringify(company.value) !== JSON.stringify(req)) {
+//      company.value = req;
+//    }
+//  }
+//};
 const get_profile = async () => {
   const req = await get_user_profile(user_id);
   if (req) {
@@ -394,13 +448,13 @@ const get_profile = async () => {
     }
   }
 };
-const showProfileSetting = () => {
-  dialogVisible.value = true;
-};
+//const showProfileSetting = () => {
+//  dialogVisible.value = true;
+//};
 
-const showCompanySetting = () => {
-  dialogVisibleCompany.value = true;
-};
+//const showCompanySetting = () => {
+//  dialogVisibleCompany.value = true;
+//};
 
 const showNavMobile = () => {
   drawer.value = !drawer.value;
@@ -412,18 +466,31 @@ const onLogin = () => {
 };
 
 const onSignUp = () => {
-  navigateTo("/auth/login");
+  navigateToPollenPass("signup");
 };
 
 const onLogout = () => {
   localStorage.clear();
-  window.location.reload();
+  window.location.href = "/";
+};
+const navigateToPollenPass = (param) => {
+  const url = new URL(runtimeConfig.public.pollenPassUrl);
+  url.searchParams.append("channel", "CH_LMS");
+  url.searchParams.append("action", param);
+  navigateTo(url.toString(), { external: true });
 };
 
-const getUserInfo = async (param) => {
-  try {
-  } catch (err) {}
+const show_profile_setting = () => {
+  dialog_visible.value = true;
 };
+
+const show_company_setting = () => {
+  dialog_company.value = true;
+};
+//const getUserInfo = async (param) => {
+//  try {
+//  } catch (err) {}
+//};
 </script>
 
 <style lang="scss" scoped>
