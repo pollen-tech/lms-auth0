@@ -4,7 +4,7 @@
       <img
         class="pa-4"
         width="100%"
-        src="../../assets/image/landing-empty.png"
+        src="../../assets/image/landing-empty.jpg"
       />
     </div>
     <div v-if="!user_authenticated" class="text-center text-body-2">

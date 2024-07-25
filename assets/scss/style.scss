@@ -195,11 +195,11 @@ body {
   border-radius: 50%;
 }
 
-.lbl input:active ~ .checkbox {
+.lbl input:active~.checkbox {
   background-color: white;
 }
 
-.lbl input:checked ~ .checkbox {
+.lbl input:checked~.checkbox {
   background-color: #7b1fa2;
   border: none;
 }
@@ -210,7 +210,7 @@ body {
   display: none;
 }
 
-.lbl input:checked ~ .checkbox:after {
+.lbl input:checked~.checkbox:after {
   display: block;
 }
 
@@ -286,6 +286,7 @@ body {
   padding-top: 2px !important;
   padding-bottom: 2px !important;
 }
+
 // end of custom select
 
 // fixed 2nd column
@@ -298,10 +299,10 @@ tbody {
   border: 1px solid $border-color;
 }
 
-.fixed-cell thead tr > th,
-.fixed-cell-first thead tr > th,
-.fixed-cell-no-select thead tr > th,
-.fixed-last-cell thead tr > th {
+.fixed-cell thead tr>th,
+.fixed-cell-first thead tr>th,
+.fixed-cell-no-select thead tr>th,
+.fixed-last-cell thead tr>th {
   background: #fff !important;
   position: sticky;
   padding: 0.5rem;
@@ -310,12 +311,12 @@ tbody {
   box-shadow: none !important;
 }
 
-.fixed-cell table > thead {
+.fixed-cell table>thead {
   z-index: 999 !important;
   border-bottom: 1px solid $border-color;
 }
 
-.fixed-last-cell table > thead {
+.fixed-last-cell table>thead {
   z-index: 999 !important;
   border-bottom: 1px solid $border-color;
 }
@@ -331,13 +332,13 @@ tbody {
   border-bottom: 1px solid $border-color;
 }
 
-.fixed-cell table thead tr > :nth-child(-n + 1),
-.fixed-cell table thead tr > :nth-last-child(-n + 1),
-.fixed-cell-first table thead tr > :nth-child(-n + 1),
-.fixed-cell-first table thead tr > :nth-last-child(-n + 1),
-.fixed-cell-no-select table thead tr > :nth-child(-n + 1),
-.fixed-cell-no-select table thead tr > :nth-last-child(-n + 1),
-.fixed-last-cell table thead tr > :nth-last-child(1) {
+.fixed-cell table thead tr> :nth-child(-n + 1),
+.fixed-cell table thead tr> :nth-last-child(-n + 1),
+.fixed-cell-first table thead tr> :nth-child(-n + 1),
+.fixed-cell-first table thead tr> :nth-last-child(-n + 1),
+.fixed-cell-no-select table thead tr> :nth-child(-n + 1),
+.fixed-cell-no-select table thead tr> :nth-last-child(-n + 1),
+.fixed-last-cell table thead tr> :nth-last-child(1) {
   position: sticky;
   left: 0;
   z-index: 999 !important;
@@ -345,12 +346,12 @@ tbody {
   width: 100px;
 }
 
-.fixed-cell table thead tr > :nth-last-child(-n + 1),
-.fixed-cell tbody tr > :nth-last-child(-n + 1),
-.fixed-cell-no-select table thead tr > :nth-last-child(-n + 1),
-.fixed-cell-no-select tbody tr > :nth-last-child(-n + 1),
-.fixed-last-cell table thead tr > :nth-last-child(-n + 2),
-.fixed-last-cell tbody tr > :nth-last-child(1) {
+.fixed-cell table thead tr> :nth-last-child(-n + 1),
+.fixed-cell tbody tr> :nth-last-child(-n + 1),
+.fixed-cell-no-select table thead tr> :nth-last-child(-n + 1),
+.fixed-cell-no-select tbody tr> :nth-last-child(-n + 1),
+.fixed-last-cell table thead tr> :nth-last-child(-n + 2),
+.fixed-last-cell tbody tr> :nth-last-child(1) {
   right: 0;
   left: 2px;
 }
@@ -361,12 +362,12 @@ tbody {
   text-align: center;
 }
 
-.fixed-cell tbody tr > :nth-child(-n + 1),
-.fixed-cell tbody tr > :nth-last-child(-n + 1),
-.fixed-cell-first tbody tr > :nth-child(-n + 1),
-.fixed-cell-no-select tbody tr > :nth-child(-n + 1),
-.fixed-cell-no-select tbody tr > :nth-last-child(-n + 1),
-.fixed-last-cell tbody tr > :nth-last-child(1) {
+.fixed-cell tbody tr> :nth-child(-n + 1),
+.fixed-cell tbody tr> :nth-last-child(-n + 1),
+.fixed-cell-first tbody tr> :nth-child(-n + 1),
+.fixed-cell-no-select tbody tr> :nth-child(-n + 1),
+.fixed-cell-no-select tbody tr> :nth-last-child(-n + 1),
+.fixed-last-cell tbody tr> :nth-last-child(1) {
   background: #fff !important;
   position: sticky !important;
   left: 0;
@@ -374,7 +375,7 @@ tbody {
   max-width: 420px;
 }
 
-.fixed-last-cell table thead tr > :nth-last-child(2) {
+.fixed-last-cell table thead tr> :nth-last-child(2) {
   position: sticky;
   left: 0;
   z-index: 9999 !important;
@@ -383,7 +384,7 @@ tbody {
   right: 334px;
 }
 
-.fixed-last-cell tbody tr > :nth-last-child(2),
+.fixed-last-cell tbody tr> :nth-last-child(2),
 .fixed-last-cell tbody th:nth-last-child(2) {
   position: sticky !important;
   width: 120px;
@@ -391,13 +392,7 @@ tbody {
   right: 334px;
 }
 
-.fixed-cell
-  .v-data-table--fixed-header
-  > .v-data-table__wrapper
-  > table
-  > thead
-  > tr
-  > th {
+.fixed-cell .v-data-table--fixed-header>.v-data-table__wrapper>table>thead>tr>th {
   box-shadow: inset 0 -1px 0 rgb(0 0 0 / 12%) !important;
 }
 
@@ -520,7 +515,7 @@ tbody {
   font-size: 0.9em !important;
 }
 
-.v-text-field--outlined > .v-input__control > .v-input__slot {
+.v-text-field--outlined>.v-input__control>.v-input__slot {
   min-height: 40.39px !important;
 }
 
@@ -664,7 +659,7 @@ tbody {
   border: 1px solid #e5e7eb;
 }
 
-.tel .v-select > .v-input__control > .v-input__slot {
+.tel .v-select>.v-input__control>.v-input__slot {
   margin-top: 8px;
 }
 
@@ -800,13 +795,16 @@ tbody {
   gap: 10px;
   display: inline-flex;
 }
+
 .bulk-image-tab .v-tab--selected {
   background: white;
   color: #8431e7 !important;
 }
+
 .bulk-image-tab {
   border: 1px solid #e5e7eb;
 }
+
 .header-title-page {
   color: #111827;
   font-family: Inter;
@@ -893,4 +891,30 @@ tbody {
   background-position: center;
   background-size: cover;
   padding: 4em;
+}
+
+.v-layout.not_auth {
+  .v-toolbar {
+    padding: 0 !important;
+
+    &__content {
+      background-color: #440F83 !important;
+    }
+  }
+}
+
+.v-layout.auth {
+  .v-toolbar {
+    padding: 0 !important;
+
+    &__content {
+      background-color: #fff !important;
+    }
+  }
+}
+
+.home-bg {
+  .banner_container {
+    background-color: #440F83;
+  }
 }

@@ -1,5 +1,8 @@
 <template>
-  <v-layout class="rounded rounded-md">
+  <!--<v-layout :class="is_authenticated ? 'auth' : 'not_auth'">-->
+    <v-layout :class="{ 'auth': isAuthenticated, 'not_auth': !isAuthenticated }">
+  
+    <CommonLoading v-if="is_loading" :loading="true" />
     <v-app-bar
       fixed
       app
@@ -12,7 +15,7 @@
       />
       <div>
         <v-list-item class="pl-1">
-          <v-list-item-title class="d-flex align-center">
+          <v-list-item-title v-if="isAuthenticated" class="d-flex align-center">
             <img src="../assets/image/pollen-lms.svg" />
 
             <p
@@ -22,10 +25,20 @@
               {{ title }}
             </p>
           </v-list-item-title>
+          <v-list-item-title v-else class="d-flex align-center">
+            <img src="../assets/image/pollen-logo-white.svg" width="40px" style="padding: 5px;"/>
+
+            <p
+              v-if="!$vuetify.display.mobile"
+              class="font-weight-bold text-caption ml-1 text-white"
+            >
+              {{ title }}
+            </p>
+          </v-list-item-title>
         </v-list-item>
       </div>
       <v-spacer />
-      <v-skeleton-loader :loading="loading" type="list-item-two-line">
+      <v-skeleton-loader :loading="is_loading" type="list-item-two-line">
         <v-menu v-if="$vuetify.display.mobile && !is_authenticated">
           <template #activator="{ props }">
             <div>
@@ -56,13 +69,14 @@
             </v-card-text>
           </v-card>
         </v-menu>
-        <div v-else class="my-10 bg-white">
+        <div v-else class="my-10" :class="{'bg-white': is_authenticated, 'bg-purple-lms': !is_authenticated}">
           <v-btn
             v-if="!is_authenticated"
             variant="outlined"
             class="my-4 mx-2 me-auto text-capitalize"
-            color="purple-darken-3"
+            color="#374151"
             @click="onLogin()"
+            style="background-color: #fff;"
             >Login</v-btn
           >
           <v-btn
@@ -322,9 +336,11 @@ const loading = ref(true);
 const showSideNav = ref(true);
 const excludeSideNav = ref(["/onboarding"]);
 const dialogVisibleCompany = ref(false);
+const is_loading = ref(false);
 const is_authenticated = computed(() => {
   return is_user_authenticated();
 });
+const isAuthenticated = ref(false);
 const company = ref({
   id: "",
   name: "",
@@ -343,11 +359,23 @@ const show_side_nav = computed(() => {
 });
 
 onMounted(async () => {
+
   await get_company();
   await get_profile();
-  setTimeout(() => {
-    loading.value = false;
-  }, 800);
+  isAuthenticated.value = is_user_authenticated();
+
+  //setInterval(() => {
+  //  console.log('is_authenticated',is_authenticated.value);
+  //}, 800);
+
+  //is_loading.value = true;
+  //const req_company = await get_company();
+  //const req_profile = await get_profile();
+  //if (!req_company && !req_profile) {
+  //  is_loading.value = false;
+  //} else {
+  //  is_loading.value = true;
+  //}
 });
 
 const get_company = async () => {
@@ -397,3 +425,6 @@ const getUserInfo = async (param) => {
   } catch (err) {}
 };
 </script>
+
+<style lang="scss" scoped>
+</style>

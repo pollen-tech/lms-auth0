@@ -17,6 +17,7 @@ const LMSTheme = {
     info: "#2196F3",
     success: "#4CAF50",
     warning: "#FB8C00",
+    "purple-lms": "#440F83",
   },
 };
 
