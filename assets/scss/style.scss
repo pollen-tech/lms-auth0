@@ -900,6 +900,13 @@ tbody {
     &__content {
       background-color: #440F83 !important;
     }
+
+  }
+
+  .home-bg {
+    .banner_container {
+      background-color: #440F83;
+    }
   }
 }
 
@@ -910,11 +917,5 @@ tbody {
     &__content {
       background-color: #fff !important;
     }
-  }
-}
-
-.home-bg {
-  .banner_container {
-    background-color: #440F83;
   }
 }
