@@ -72,6 +72,8 @@ export default defineNuxtConfig({
       auth0_redirect_uri: "http://localhost:3000/",
       lmsBackendUrl:
         "https://47ekwsnw5d.execute-api.ap-southeast-1.amazonaws.com/dev/", // https://47ekwsnw5d.execute-api.ap-southeast-1.amazonaws.com/dev/
+      pollenPassUrl:
+        "http://sandbox.web.pollen-pass.s3-website-ap-southeast-1.amazonaws.com",
       adminApiUrl: "https://admin-api-dev.pollen.tech",
       internalKey: "c3RhZ2luZy1wb2xsZW4udGVjaA==",
       appName: "Pollen LMS",

@@ -54,11 +54,11 @@
 
                 <v-col sm="11" md="7" class="d-flex flex-row">
                   <div>
-                    <b style="letter-spacing: 0.03em"
-                      >Pollen Pass Profile Settings</b
-                    >
+                    <b style="letter-spacing: 0.03em">{{
+                      dialog_content[tab]?.title
+                    }}</b>
                     <p class="text-caption text-grey">
-                      Here you can update and view your Pollen Pass credentials
+                      {{ dialog_content[tab]?.description }}
                     </p>
                   </div>
                 </v-col>
@@ -79,16 +79,16 @@
                 align-tabs="start"
                 color="deep-purple-accent-4"
               >
-                <v-tab value="1" class="text-capitalize"
+                <v-tab value="0" class="text-capitalize"
                   >Pollen Pass Profile Settings</v-tab
                 >
-                <v-tab value="2" class="text-capitalize"
+                <v-tab value="1" class="text-capitalize"
                   >Channel Profiles</v-tab
                 >
               </v-tabs>
 
               <v-tabs-window v-model="tab">
-                <v-tabs-window-item value="1">
+                <v-tabs-window-item value="0">
                   <v-container fluid>
                     <v-row>
                       <v-col class="ma-2">
@@ -132,7 +132,7 @@
                               <span class="red--text">*</span></label
                             >
                             <VueTelInput
-                              v-model="profile.phone"
+                              v-model="profile.phone_no"
                               mode="international"
                               :required="true"
                               :maxLen="20"
@@ -212,7 +212,7 @@
                             <div>
                               <p class="font-weight-bold">Pollen Pass ID #:</p>
                               <p class="font-weight-bold">
-                                {{ profile?.auth_id }}
+                                {{ profile?.pollen_pass_id }}
                               </p>
                             </div>
                             <div>
@@ -233,7 +233,7 @@
                     </v-row>
                   </v-container>
                 </v-tabs-window-item>
-                <v-tabs-window-item value="2">
+                <v-tabs-window-item value="1">
                   <v-container fluid>
                     <v-table class="bg-white">
                       <thead>
@@ -307,9 +307,21 @@ const profile = ref({
   channel: "",
   status: "",
   created_at: "",
+  pollen_pass_id: "",
 });
 const required = [(v) => !!v || "Field is required"];
 const channels = ref(null);
+const dialog_content = ref([
+  {
+    title: "Pollen Pass Profile Settings",
+    description: "Here you can update and view your Pollen Pass credentials",
+  },
+  {
+    title: "Connected Channels",
+    description: "Here you view the links connected to this account",
+  },
+]);
+const dialog_content_show = ref(0);
 
 onMounted(async () => {
   // await getUserInfo(""); TODO
@@ -329,7 +341,10 @@ const get_profile = async () => {
   if (req) {
     if (JSON.stringify(profile.value) !== JSON.stringify(req)) {
       profile.value = req.data ? req.data : req;
-      //console.log(profile.value);
+      if (profile.value?.phone_verified) {
+        profile.value.phone_no =
+          "+" + profile.value.country_code + profile.value.phone_no;
+      }
     }
   }
 };
