@@ -7,7 +7,7 @@
 			<v-sheet class="pa-2 ma-2">
 				<p class="text_w_image_sub">Pollen Pass on Pollen LMS</p>
 				<h2 class="text_w_image_title text-h6 text-xs-h5 text-sm-h4">How to Start Selling with Pollen's Liquidation <br/>Management System</h2>
-				<div class="text_w_image_img"><img src="~/assets/image/lms_image_men_safe.jpg" alt="" width="100%" height="100%"></div>
+				<div class="text_w_image_img"><img src="~/assets/image/lms_image_men_safe.webp" alt="" width="100%" height="auto%"></div>
 				<p class="text_w_image_para">Sign up and get a free LMS account to start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world</p>
 			</v-sheet>
 
