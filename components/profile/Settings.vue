@@ -243,14 +243,21 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
+                        <tr v-for="(item, index) in channels">
+                          <td>{{ CHANNEL[item.channel] || "unknown" }}</td>
+                          <td class="text-purple">(NOT AVAILABLE)</td>
+                          <td>
+                            {{ moment(item?.created_at).format("DD/MM/YYYY") }}
+                          </td>
+                        </tr>
+                        <!--<tr>
                           <td>{{ CHANNEL[profile.channel] || "unknown" }}</td>
                           <td>
                             {{
                               moment(profile?.created_at).format("DD/MM/YYYY")
                             }}
                           </td>
-                        </tr>
+                        </tr>-->
                       </tbody>
                     </v-table>
                   </v-container>
@@ -283,7 +290,7 @@ const emit = defineEmits(["close"]);
 const runtimeConfig = useRuntimeConfig();
 
 const seller_store = useSellerStore();
-const { get_user_profile, get_user_profile_channel } = seller_store;
+const { get_user_profile, get_user_channel } = seller_store;
 
 const tab = ref(null);
 const dialogVisible = ref(false);
@@ -302,6 +309,7 @@ const profile = ref({
   created_at: "",
 });
 const required = [(v) => !!v || "Field is required"];
+const channels = ref(null);
 
 onMounted(async () => {
   // await getUserInfo(""); TODO
@@ -312,7 +320,7 @@ onUpdated(async () => {
   console.log(props.dialog_value && !profile.value.auth_id);
   if (props.dialog_value && !profile.value.auth_id) {
     await get_profile();
-    await get_profile_channel();
+    await get_pp_channel();
   }
 });
 
@@ -325,12 +333,10 @@ const get_profile = async () => {
     }
   }
 };
-const get_profile_channel = async () => {
-  const req = await get_user_profile_channel(props.user_id);
+const get_pp_channel = async () => {
+  const req = await get_user_channel(props.user_id);
   if (req) {
-    if (JSON.stringify(profile.value) !== JSON.stringify(req)) {
-      profile.value.channel = req.data ? req.data[0].channel : req[0].channel;
-    }
+    channels.value = req?.data;
   }
 };
 const phoneObject = (object) => {

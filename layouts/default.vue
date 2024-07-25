@@ -22,7 +22,7 @@
               v-if="!$vuetify.display.mobile"
               class="font-weight-bold text-caption ml-1"
             >
-              {{ title }}{{ 'ok' }}
+              {{ title }}
             </p>
           </v-list-item-title>
           <v-list-item-title v-else class="d-flex align-center">
