@@ -24,7 +24,17 @@
     <div v-else>
       <v-container>
         <v-card elevation="0" class="px-1">
-          <LandingBanner />
+          <!--<LandingBanner />-->
+					<v-breadcrumbs
+            class="text-caption text-purple text-capitalize mb-2"
+            :items="['home']"
+          >
+            <template #prepend>
+              <v-icon size="small">mdi-home</v-icon>
+            </template>
+          </v-breadcrumbs>
+
+					<LandingEmpty />
 
           
         </v-card>

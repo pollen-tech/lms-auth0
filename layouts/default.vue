@@ -107,7 +107,7 @@
                   class="text-grey-darken-1 text-body-2"
                   @click="show_profile_setting()"
                 >
-                  <v-icon>mdi-account-details-outline</v-icon> Profile
+                  Pollen Pass Profile Settings
                 </v-list-item>
                 <v-list-item
                   class="text-grey-darken-1 text-body-2"
@@ -120,7 +120,7 @@
                     class="text-grey-darken-1 text-body-2 cursor-pointer text-decoration-none"
                     @click="displayLogoutDialog = true"
                   >
-                    <v-icon>mdi-logout</v-icon> Logout
+                    Logout
                   </NuxtLink>
                 </v-list-item>
               </v-list>
@@ -139,8 +139,9 @@
             }}
           </h5>
           <h6 class="font-weight-regular">
-            Member ID:
-            {{ profile?.auth_id || "-" }}
+            Email:
+            <!--{{ profile?.auth_id || "-" }}-->
+            {{ profile?.email || "-" }}
           </h6>
         </div>
       </v-skeleton-loader>
