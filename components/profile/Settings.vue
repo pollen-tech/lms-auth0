@@ -239,13 +239,23 @@
                       <thead>
                         <tr class="">
                           <th class="text-left font-weight-bold">Channel</th>
+                          <th class="text-left font-weight-bold">Account Profile LINK</th>
                           <th class="text-left font-weight-bold">Created At</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr v-for="(item, index) in channels">
                           <td>{{ CHANNEL[item.channel] || "unknown" }}</td>
-                          <td class="text-purple">(NOT AVAILABLE)</td>
+                          <td class="text-purple">
+                            <a
+                              :href="
+                                item.channel === 'CH_POLLEN_DIRECT'
+                                  ? runtimeConfig.public.pollenDirectUrl
+                                  : '/'
+                              "
+                              >{{ CHANNEL[item.channel] }}</a
+                            >
+                          </td>
                           <td>
                             {{ moment(item?.created_at).format("DD/MM/YYYY") }}
                           </td>

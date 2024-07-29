@@ -64,18 +64,12 @@ export default defineNuxtConfig({
   css: ["@/assets/scss/style.scss"],
   runtimeConfig: {
     public: {
-      auth0_domain: "https://pollen-pass-dev.us.auth0.com",
-      auth0_client_id: "tXnZhibIdDblFgucHQ9f8JJKmC18yaKM",
-      auth0_client_secret:
-        "SDx5HuMps011-QtBph-ul-QUFCToBqXruZhLLYeEzLbXb8nIIjGGwuZurRoKjsEp",
-      auth0_audience: "pollen-pass",
-      auth0_redirect_uri: "http://localhost:3000/",
       lmsBackendUrl:
         "https://47ekwsnw5d.execute-api.ap-southeast-1.amazonaws.com/dev/", // https://47ekwsnw5d.execute-api.ap-southeast-1.amazonaws.com/dev/
       pollenPassUrl:
         "http://sandbox.web.pollen-pass.s3-website-ap-southeast-1.amazonaws.com",
-      adminApiUrl: "https://admin-api-dev.pollen.tech",
-      internalKey: "c3RhZ2luZy1wb2xsZW4udGVjaA==",
+      pollenDirectUrl:
+        "http://sandbox.web.direct.s3-website-ap-southeast-1.amazonaws.com",
       appName: "Pollen LMS",
       appVersion: "2.0.0",
     },
