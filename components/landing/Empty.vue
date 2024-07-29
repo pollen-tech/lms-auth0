@@ -1,41 +1,8 @@
 <template>
-  <div class="mt-16 d-flex justify-space-between">
-    <v-sheet
-      class="mt-16 px-2 d-flex justify-end bg-transparent"
-      style="margin-top: 10% !important"
-    >
-      <div
-        :class="height <= 400 ? 'text-center' : 'text-right'"
-        class="d-flex flex-column text-right w-100 mx-auto px-10"
-      >
-        <p
-          :class="height <= 400 ? ' text-h3' : 'text-h2'"
-          class="font-weight-black text-purple-darken-3 h-auto"
-          :style="
-            height <= 400
-              ? ' letter-spacing: 0.12rem !important; line-height: 4rem'
-              : 'letter-spacing: 0.12rem !important; line-height: 5rem'
-          "
-        >
-          Something great is about to come!
-        </p>
-        <p class="text-subtitle-1 my-4">
-          This page is under construction, We are still wrapping the gift nicely
-          as of this moment, you’ll get notified once it’s ready.
-        </p>
-        <p>
-          Need Help?
-          <a
-            href="mailto:contact@pollen.tech"
-            class="text-purple cursor-pointer text-decoration-none"
-            >Contact Us</a
-          >
-        </p>
-      </div>
-    </v-sheet>
-    <v-sheet class="pa-2 align-center d-none d-md-block bg-transparent">
-      <img class="pl-4" src="~/assets/image/empty-page-1.png" />
-    </v-sheet>
+  <div class="mt-16 d-flex flex-column justify-space-between text-center align-center">
+    <img src="~/assets/image/under_construction.svg" alt="" class="img_under_construction">
+    <h4 class="mt-10">Something awesome will be up soon! <br> Under Construction.</h4>
+    
   </div>
 </template>
 
@@ -66,4 +33,13 @@ const height = computed(() => {
 // import { emptyPage } from '~/assets/image/empty-page.png';
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.img_under_construction {
+  width: auto;
+}
+@media (max-width: 500px) {
+  .img_under_construction {
+    width: 100%;
+  }
+}
+</style>
