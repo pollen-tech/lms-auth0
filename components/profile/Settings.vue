@@ -220,11 +220,9 @@
                                 Pollen Member since:
                               </p>
                               <p class="font-weight-bold text-body-2">
-                                {{
-                                  moment(profile?.created_at).format(
+                                {{ moment(profile?.created_at).format(
                                     "DD/MM/YYYY"
-                                  )
-                                }}
+                                  ) }}
                               </p>
                             </div>
                           </div>
@@ -362,6 +360,14 @@ const get_pp_channel = async () => {
   const req = await get_user_channel(props.user_id);
   if (req) {
     channels.value = req?.data;
+
+    const channelItem = channels.value.find(item => item.channel === "CH_LMS");
+    if (channelItem && channelItem.created_at) {
+      profile.value.created_at = channelItem.created_at;
+    } else {
+      profile.value.created_at = '-';
+    }
+
   }
 };
 const phoneObject = (object) => {

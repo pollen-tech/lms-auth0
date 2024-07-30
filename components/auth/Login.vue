@@ -1,19 +1,19 @@
 <template>
   <div>
     <div
-      class="d-flex flex-column align-center mx-16"
+      class="d-flex flex-column align-center mx-xs-4 mx-16 "
       :style="{
         'margin-top': $vuetify.display.mobile ? '20px' : '10%',
       }"
     >
-      <div class="text-caption justify-center mb-12 d-flex">
+      <div class="text-caption justify-center mb-12 d-flex d-sm-flex flex-column flex-sm-row">
         <img
           src="~/assets/image/pollen-logo.svg"
           class="mx-4"
           style="width: 50px"
         />
-        <div>
-          <p class="font-weight-bold">
+        <div style="font-size: 14px;">
+          <p class="font-weight-bold font-">
             {{ notification.title }}
           </p>
           <p>
@@ -21,7 +21,8 @@
           </p>
         </div>
       </div>
-      <h3>{{ title }}</h3>
+      <h3 style="color: #111827; font-size: 20px">{{ title }}</h3>
+      <p style="color: #111827; font-size: 14x">{{ subtitle }}</p>
 
       <v-card
         :width="$vuetify.display.mobile ? 300 : 450"
@@ -30,8 +31,8 @@
       >
         <v-form ref="formRef">
           <div class="my-4 text-start flex-1-0">
-            <label class="font-weight-medium"
-              >Email <span class="red--text">*</span>
+            <label class="font-weight-medium" style="font-size: 14px"
+              >Enter your Pollen Pass registered email <span class="red--text">*</span>
             </label>
 
             <v-text-field
@@ -39,37 +40,23 @@
               variant="outlined"
               placeholder="Enter Email"
               :rules="required_email"
+              class="custom-text-field"
+              @input="validateEmail"
             ></v-text-field>
           </div>
-          <v-checkbox
-            v-model="check_accept_terms"
-            hide-details
-            @change="checkTerms()"
-          >
-            <template v-slot:label>
-              <div>
-                Accept Pollen
-                <a
-                  href="https://www.pollen.tech/privacy"
-                  target="_blank"
-                  style="color: #6a27b9"
-                  v-bind="props"
-                  @click.stop
-                >
-                  Terms and Conditions
-                </a>
-              </div>
-            </template>
-          </v-checkbox>
           <v-btn
-            :disabled="!check_accept_terms"
-            class="my-4 me-auto text-capitalize rounded-lg"
+            class="custom-button my-4 me-auto text-capitalize rounded-lg"
             color="#8431E7"
             block
             :loading="is_loading"
             @click="submit"
-            >Continue</v-btn
-          >
+            :color="isEmailValid ? 'success' : 'default'"
+            :disabled="!isEmailValid"
+            >Sign in</v-btn>
+            <p class="text-center" style="color: #111827; font-size: 14px">
+              Want to access Pollen LMS?
+              <a href="#" @click="onSignUp()" class="link">Sign Up with Pollen Pass</a>
+            </p>
         </v-form>
       </v-card>
 
@@ -105,23 +92,33 @@
 <script setup>
 import { ref, reactive } from "vue";
 
+const runtimeConfig = useRuntimeConfig();
+
 const emit = defineEmits(["submit"]);
 
-const title = ref("Enter your information");
+const title = ref("Login");
+const subtitle = ref("Login to LMS using your pollen pass email");
+
 const notification = ref({
-  title: "Get 24/7 Clearance Sales On 100% Authentic Items with Pollen Pass",
-  desc: "Pollen Pass is Pollen’s free buyer membership program. By signing up as a Pollen Pass member on Pollen Save. Pollen Save delivers excess or discontinued products from global brands direct to your doorstep. Whether you're looking for shampoo, conditioner, face wash, make up, toys, shoes, or more - there's something for everyone at unbeatable prices on Pollen Save!",
+  title: "How to Start Selling with Pollen's Liquidation Management System",
+  desc: "Sign up and get a free LMS account to start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world",
 });
 const email = ref("");
 const required_email = [
   (v) =>
-    /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
+    /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/.test(v) ||
     "E-mail must be valid",
 ];
 const is_loading = ref(false);
 const show_dialog = ref(false);
-const check_accept_terms = ref(false);
+const isEmailValid = ref(false);
 const formRef = ref(null);
+
+const validateEmail = () => {
+  isEmailValid.value = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/.test(
+    email.value
+  );
+};
 
 const submit = async () => {
   is_loading.value = true;
@@ -134,7 +131,16 @@ const submit = async () => {
   }
 };
 
-const checkTerms = () => {};
+const onSignUp = () => {
+  navigateToPollenPass("signup");
+};
+
+const navigateToPollenPass = (param) => {
+  const url = new URL(runtimeConfig.public.pollenPassUrl);
+  url.searchParams.append("channel", "CH_LMS");
+  url.searchParams.append("action", param);
+  navigateTo(url.toString(), { external: true });
+};
 
 onMounted(async () => {});
 </script>
