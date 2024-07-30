@@ -74,7 +74,7 @@
             </p>
           </div>
           <v-btn
-            class="my-4 me-auto text-capitalize rounded-lg"
+            class="custom-button my-4 me-auto text-capitalize rounded-lg"
             color="#8431E7"
             block
             :loading="isLoading"

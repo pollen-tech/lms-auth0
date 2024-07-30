@@ -42,6 +42,7 @@
               :rules="required_email"
               class="custom-text-field"
               @input="validateEmail"
+              autocomplete="email"
             ></v-text-field>
           </div>
           <v-btn
@@ -49,7 +50,7 @@
             color="#8431E7"
             block
             :loading="is_loading"
-            @click="submit"
+            @click="onValidateExistEmail()"
             :color="isEmailValid ? 'success' : 'default'"
             :disabled="!isEmailValid"
             >Sign in</v-btn>
@@ -59,8 +60,10 @@
             </p>
         </v-form>
       </v-card>
+      <SmallDialog />
 
-      <v-dialog
+
+      <!--<v-dialog
         v-model="show_dialog"
         persistent
         class="mx-auto pa-2"
@@ -84,18 +87,24 @@
             >
           </v-card-actions>
         </v-card>
-      </v-dialog>
+      </v-dialog>-->
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive } from "vue";
+import { lmsApi } from "~/services/api";
+import { useDialogStore } from "@/stores/dialog";
+import SmallDialog from "@/components/common/SmallDialog.vue";
 
-const runtimeConfig = useRuntimeConfig();
+
+const dialogStore = useDialogStore();
 
 const emit = defineEmits(["submit"]);
 
+const data = ref(null);
+const item = ref({ items: [] });
 const title = ref("Login");
 const subtitle = ref("Login to LMS using your pollen pass email");
 
@@ -113,11 +122,59 @@ const is_loading = ref(false);
 const show_dialog = ref(false);
 const isEmailValid = ref(false);
 const formRef = ref(null);
+const config = useRuntimeConfig();
 
 const validateEmail = () => {
   isEmailValid.value = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/.test(
     email.value
   );
+};
+
+const showDialog = () => {
+  dialogStore.showDialog(
+    "Email Not Registered",
+    'It looks like the email address you entered is not registered in our system. Please check the email address and try again. If you are new here, you can sign up to create a new Pollen Pass  account. For assistance please send us a message at <a href="mailto:cs@pollen.tech">cs@pollen.tech.</a>'
+  );
+};
+
+const onValidateExistEmail = async () => {
+  //let email = this.email.value;
+  console.log("onValidateExistEmail -", email.value);
+
+  try {
+    //const req = await lmsApi("/onboard-company", "POST", body);
+    const body = '';
+
+    //const response = await lmsApi(`/users/pollen-pass-by-email/${email}`, "GET", body);
+
+    const response = await fetch(
+      `${config.public.lmsBackendUrl}/users/pollen-pass-by-email/${email.value}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    data.value = await response.json();
+
+    console.log(data.value.status_code);
+
+    if (data.value.status_code === "OK") {
+      console.log("submit");
+      submit();
+    } else {
+      //console.log("showDialog");
+      showDialog();
+    }
+  } catch (err) {
+    error.value = "Failed to fetch data";
+    console.log(err);
+  }
 };
 
 const submit = async () => {
@@ -136,7 +193,7 @@ const onSignUp = () => {
 };
 
 const navigateToPollenPass = (param) => {
-  const url = new URL(runtimeConfig.public.pollenPassUrl);
+  const url = new URL(config.public.pollenPassUrl);
   url.searchParams.append("channel", "CH_LMS");
   url.searchParams.append("action", param);
   navigateTo(url.toString(), { external: true });
