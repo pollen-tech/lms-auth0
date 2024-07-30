@@ -6,15 +6,15 @@ $rounded-md: 6px;
 
 /* main.css */
 @font-face {
-  font-family: "Poppins";
+  font-family: "Inter";
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url("../fonts/Poppins-Regular.ttf") format("truetype");
+  src: url("../fonts/Inter-Regular.ttf") format("truetype");
 }
 
 * {
-  font-family: Poppins !important;
+  font-family: Inter !important;
 }
 
 /* background*/
@@ -899,6 +899,7 @@ tbody {
 
     &__content {
       background-color: #440F83 !important;
+      transition: background-color 0.5s ease;
     }
 
   }
@@ -916,6 +917,36 @@ tbody {
 
     &__content {
       background-color: #fff !important;
+      transition: background-color 0.5s ease;
     }
   }
+}
+
+
+.custom-text-field .v-input__control .v-field__field,
+.custom-text-field .v-input__control .v-field__field input {
+  max-height: 40px !important;
+  min-height: 40px !important;
+}
+
+.custom-text-field {
+  margin-top: 5px;
+}
+
+.custom-button {
+  height: 40px !important;
+  font-size: 16px !important;
+  padding: 8px 20px;
+  border-radius: 6px !important;
+
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.link {
+  color: #8431E7 !important;
+  text-decoration: none;
 }
