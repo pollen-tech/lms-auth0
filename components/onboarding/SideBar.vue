@@ -30,7 +30,7 @@
         </p>
       </div>
       <img
-        src="../../assets/image/onboarding-side-bar-bg.svg"
+        src="../../assets/image/onboarding-side-bar-bg.png"
         alt="Pollen image"
         class="w-100"
       />

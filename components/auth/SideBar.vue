@@ -4,7 +4,7 @@
     style="background-color: transparent"
   >
     <img
-      src="~/assets/image/avatar_pollen_white.webp"
+      src="~/assets/image/pollen-logo-white.svg"
       alt="Pollen image"
       width="70px"
     />
