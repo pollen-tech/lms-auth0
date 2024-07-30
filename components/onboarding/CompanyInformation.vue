@@ -249,15 +249,18 @@ const submit = async () => {
       const body = {
         name: item.value.companyName,
         company_type_id: item.value.types,
-        operation_country_id: item.value.country.id,
+        operation_country_id: item.value.country.country_id,
         liquidate_unit_id: item.value.liquidate.id,
         user_id: props.userId,
       };
       console.log(body);
+      console.log(item.value);
+
       const req = await lmsApi("/onboard-company", "POST", body);
 
       if (req) {
         emit("submit");
+        console.log('submit: ', req);
       } else {
         console.log(req);
       }

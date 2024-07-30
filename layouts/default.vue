@@ -426,11 +426,13 @@ const show_side_nav = computed(() => {
 });
 
 onMounted(async () => {
+  is_loading.value = true;
   if (user_id) {
   //await get_company();
     await get_profile();
   }
   isAuthenticated.value = is_user_authenticated();
+  is_loading.value = false;
 });
 
 //const get_company = async () => {
