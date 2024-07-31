@@ -65,7 +65,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       lmsBackendUrl:
-        "https://47ekwsnw5d.execute-api.ap-southeast-1.amazonaws.com/dev/", // https://47ekwsnw5d.execute-api.ap-southeast-1.amazonaws.com/dev/
+        "https://47ekwsnw5d.execute-api.ap-southeast-1.amazonaws.com/dev/", //"http:localhost:3080",
       pollenPassUrl:
         "http://sandbox.web.pollen-pass.s3-website-ap-southeast-1.amazonaws.com",
       pollenDirectUrl:

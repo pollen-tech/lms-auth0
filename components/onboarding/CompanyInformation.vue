@@ -254,7 +254,6 @@ const submit = async () => {
         user_id: props.userId,
       };
       console.log(body);
-      console.log(item.value);
 
       const req = await lmsApi("/onboard-company", "POST", body);
 
