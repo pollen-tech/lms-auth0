@@ -245,12 +245,15 @@ const fetchCity = () => {};
 const submit = async () => {
   try {
     const { valid } = await formRef.value.validate();
+    console.log(item.value);
     if (valid) {
       const body = {
         name: item.value.companyName,
         company_type_id: item.value.types,
         operation_country_id: item.value.country.country_id,
+        operation_country_name: item.value.country.name,
         liquidate_unit_id: item.value.liquidate.id,
+        liquidate_unit_name: item.value.liquidate.name,
         user_id: props.userId,
       };
       console.log(body);

@@ -305,7 +305,9 @@ const company = ref({
   name: "",
   company_type_id: "",
   operation_country_id: "",
+  operation_country_name: "",
   liquidate_unit_id: "",
+  liquidate_unit_name: "",
 });
 const required = [(v) => !!v || "Field is required"];
 
