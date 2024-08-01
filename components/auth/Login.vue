@@ -115,7 +115,7 @@ const notification = ref({
 const email = ref("");
 const required_email = [
   (v) =>
-    /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/.test(v) ||
+    /^[\w+.-]+@[\w.-]+\.\w{2,}$/.test(v) ||
     "E-mail must be valid",
 ];
 const is_loading = ref(false);
@@ -125,9 +125,7 @@ const formRef = ref(null);
 const config = useRuntimeConfig();
 
 const validateEmail = () => {
-  isEmailValid.value = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/.test(
-    email.value
-  );
+  isEmailValid.value = /^[\w+.-]+@[\w.-]+\.\w{2,}$/.test(email.value);
 };
 
 const showDialog = () => {
@@ -145,27 +143,23 @@ const onValidateExistEmail = async () => {
     //const req = await lmsApi("/onboard-company", "POST", body);
     const body = '';
 
-    //const response = await lmsApi(`/users/pollen-pass-by-email/${email}`, "GET", body);
+    const response = await lmsApi(`/users/pollen-pass-by-email/${email.value}`, "GET", body);
 
-    const response = await fetch(
-      `${config.public.lmsBackendUrl}/users/pollen-pass-by-email/${email.value}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    //const response = await fetch(
+    //  `${config.public.lmsBackendUrl}/users/pollen-pass-by-email/${email.value}`,
+    //  {
+    //    method: "GET",
+    //    headers: {
+    //      "Content-Type": "application/json",
+    //    },
+    //  }
+    //);
+    console.log(response);
 
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    data.value = await response.json();
 
-    console.log(data.value.status_code);
-
-    if (data.value.status_code === "OK") {
+    if (response.status_code === "OK") {
       console.log("submit");
+      console.log(response);
       submit();
     } else {
       //console.log("showDialog");
