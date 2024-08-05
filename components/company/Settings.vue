@@ -183,10 +183,10 @@
                           <span class="red--text">*</span></label
                         >
                         <v-autocomplete
-                          v-model="company.country"
-                          item-value="id"
+                          v-model="company.operation_country_id"
+                          item-value="country_id"
                           item-title="name"
-                          :items="countries"
+                          :items="countryStore.countries"
                           :return-object="true"
                           placeholder="Choose One"
                           variant="outlined"
@@ -304,8 +304,10 @@ const company = ref({
   id: "",
   name: "",
   company_type_id: "",
-  country: "",
+  operation_country_id: "",
+  operation_country_name: "",
   liquidate_unit_id: "",
+  liquidate_unit_name: "",
 });
 const required = [(v) => !!v || "Field is required"];
 

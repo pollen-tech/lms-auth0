@@ -16,7 +16,7 @@ export const useCountryStore = defineStore("country", {
       this.countries = param;
     },
     async getCities(param: any) {
-      const data = await lmsApi(`/countries/${param}/cities`);
+      const data = await lmsApi(`/countries/${param}/city`);
       return data;
     },
   },
