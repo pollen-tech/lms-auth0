@@ -220,9 +220,25 @@ import { lmsApi } from "~/services/api";
 const emit = defineEmits(["submit"]);
 const props = defineProps({
   userId: { type: String, default: "" },
+  companyId: { type: String, default: "" },
+});
+
+const profile = ref({
+  auth_id: "",
+  first_name: "",
+  last_name: "",
+  country_code: "",
+  phone_no: "",
+  phone_verified: false,
+  email: "",
+  channel: "",
+  status: "",
+  created_at: "",
+  pollen_pass_id: "",
 });
 
 const sellerStore = useSellerStore();
+const { get_company_profile, get_user_profile } = sellerStore;
 
 const countryStore = useCountryStore();
 const { countries } = storeToRefs(countryStore);
@@ -234,11 +250,14 @@ const showDialog = ref(false);
 const validateCompanyName = ref(0);
 const checkAcceptTerms = ref(false);
 const formRef = ref(null);
+const company = ref({});
 
-onMounted(() => {
+onMounted(async () => {
   sellerStore.getCompanyTypes();
   sellerStore.getLiquidateUnit();
   countryStore.getCountries();
+  await getCompany();
+  await get_profile();
 });
 
 const fetchCity = () => {};
@@ -256,13 +275,14 @@ const submit = async () => {
         liquidate_unit_name: item.value.liquidate.name,
         user_id: props.userId,
       };
-      console.log(body);
 
       const req = await lmsApi("/onboard-company", "POST", body);
 
       if (req) {
+        props.companyId = req.id;
         emit("submit");
         console.log('submit: ', req);
+        sendAdminOnboardingCompleteEmail(req.id);
       } else {
         console.log(req);
       }
@@ -285,6 +305,52 @@ const onValidateCompanyName = async () => {
     }
   } catch (err) {
     console.log(err);
+  }
+};
+
+const sendAdminOnboardingCompleteEmail = async (companyId) => {
+  //console.log('sendAdminOnboardingCompleteEmail', companyId);
+  try {
+    const body = {
+      first_name: profile.value.first_name,
+      last_name: profile.value.last_name,
+      email: profile.value.email,
+      country_code: profile.value.country_code,
+      phone_no: profile.value.phone_no,
+    };
+    const req = await lmsApi(
+      `/onboard-company/${companyId}/notify-admin-by-email`,
+      "POST",
+      body
+    );
+    if (req.status_code != "OK") {
+      emit("error", req);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+const getCompany = async () => {
+  const req = await get_company_profile(props.userId);
+  if (req) {
+    if (JSON.stringify(company?.value) !== JSON.stringify(req)) {
+      company.value = req;
+      console.log(company.value);
+    }
+  } else {
+    console.log('error: ', req);
+  }
+};
+const get_profile = async () => {
+  const req = await get_user_profile(props.userId);
+  if (req) {
+    if (JSON.stringify(profile.value) !== JSON.stringify(req)) {
+      profile.value = req.data ? req.data : req;
+      if (profile.value?.phone_verified) {
+        profile.value.phone_no =
+          "+" + profile.value.country_code + profile.value.phone_no;
+      }
+    }
   }
 };
 const checkTerms = () => {};
