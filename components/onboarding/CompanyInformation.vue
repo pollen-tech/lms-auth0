@@ -281,7 +281,7 @@ const submit = async () => {
       if (req) {
         props.companyId = req.id;
         emit("submit");
-        console.log('submit: ', req);
+        console.log("submit: ", req);
         sendAdminOnboardingCompleteEmail(req.id);
       } else {
         console.log(req);
@@ -317,6 +317,7 @@ const sendAdminOnboardingCompleteEmail = async (companyId) => {
       email: profile.value.email,
       country_code: profile.value.country_code,
       phone_no: profile.value.phone_no,
+      pollen_pass_id: profile.value.pollen_pass_id,
     };
     const req = await lmsApi(
       `/onboard-company/${companyId}/notify-admin-by-email`,
@@ -338,7 +339,7 @@ const getCompany = async () => {
       console.log(company.value);
     }
   } else {
-    console.log('error: ', req);
+    console.log("error: ", req);
   }
 };
 const get_profile = async () => {
