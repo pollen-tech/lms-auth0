@@ -1,18 +1,20 @@
 <template>
   <div>
     <div
-      class="d-flex flex-column align-center mx-xs-4 mx-16 "
+      class="d-flex flex-column align-center mx-xs-4 mx-16"
       :style="{
         'margin-top': $vuetify.display.mobile ? '20px' : '10%',
       }"
     >
-      <div class="text-caption justify-center mb-12 d-flex d-sm-flex flex-column flex-sm-row">
+      <div
+        class="text-caption justify-center mb-12 d-flex d-sm-flex flex-column flex-sm-row"
+      >
         <img
           src="~/assets/image/pollen-logo.svg"
           class="mx-4"
           style="width: 50px"
         />
-        <div style="font-size: 14px;">
+        <div style="font-size: 14px">
           <p class="font-weight-bold font-">
             {{ notification.title }}
           </p>
@@ -32,7 +34,8 @@
         <v-form ref="formRef">
           <div class="my-4 text-start flex-1-0">
             <label class="font-weight-medium" style="font-size: 14px"
-              >Enter your Pollen Pass registered email <span class="red--text">*</span>
+              >Enter your Pollen Pass registered email
+              <span class="red--text">*</span>
             </label>
 
             <v-text-field
@@ -53,15 +56,17 @@
             @click="onValidateExistEmail()"
             :color="isEmailValid ? 'success' : 'default'"
             :disabled="!isEmailValid"
-            >Sign in</v-btn>
-            <p class="text-center" style="color: #111827; font-size: 14px">
-              Want to access Pollen LMS?
-              <a href="#" @click="onSignUp()" class="link">Sign Up with Pollen Pass</a>
-            </p>
+            >Sign in</v-btn
+          >
+          <p class="text-center" style="color: #111827; font-size: 14px">
+            Want to access Pollen LMS?
+            <a href="#" @click="on_signup()" class="link"
+              >Sign Up with Pollen Pass</a
+            >
+          </p>
         </v-form>
       </v-card>
       <SmallDialog />
-
 
       <!--<v-dialog
         v-model="show_dialog"
@@ -98,7 +103,6 @@ import { lmsApi } from "~/services/api";
 import { useDialogStore } from "@/stores/dialog";
 import SmallDialog from "@/components/common/SmallDialog.vue";
 
-
 const dialogStore = useDialogStore();
 
 const emit = defineEmits(["submit"]);
@@ -114,9 +118,7 @@ const notification = ref({
 });
 const email = ref("");
 const required_email = [
-  (v) =>
-    /^[\w+.-]+@[\w.-]+\.\w{2,}$/.test(v) ||
-    "E-mail must be valid",
+  (v) => /^[\w+.-]+@[\w.-]+\.\w{2,}$/.test(v) || "E-mail must be valid",
 ];
 const is_loading = ref(false);
 const show_dialog = ref(false);
@@ -141,9 +143,13 @@ const onValidateExistEmail = async () => {
 
   try {
     //const req = await lmsApi("/onboard-company", "POST", body);
-    const body = '';
+    const body = "";
 
-    const response = await lmsApi(`/users/pollen-pass-by-email/${email.value}`, "GET", body);
+    const response = await lmsApi(
+      `/users/pollen-pass-by-email/${email.value}`,
+      "GET",
+      body
+    );
 
     //const response = await fetch(
     //  `${config.public.lmsBackendUrl}/users/pollen-pass-by-email/${email.value}`,
@@ -155,7 +161,6 @@ const onValidateExistEmail = async () => {
     //  }
     //);
     console.log(response);
-
 
     if (response.status_code === "OK") {
       console.log("submit");
@@ -182,7 +187,7 @@ const submit = async () => {
   }
 };
 
-const onSignUp = () => {
+const on_signup = () => {
   navigateToPollenPass("signup");
 };
 

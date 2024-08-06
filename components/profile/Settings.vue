@@ -220,9 +220,11 @@
                                 Pollen Member since:
                               </p>
                               <p class="font-weight-bold text-body-2">
-                                {{ moment(profile?.created_at).format(
+                                {{
+                                  moment(profile?.created_at).format(
                                     "DD/MM/YYYY"
-                                  ) }}
+                                  )
+                                }}
                               </p>
                             </div>
                           </div>
@@ -237,7 +239,9 @@
                       <thead>
                         <tr class="">
                           <th class="text-left font-weight-bold">Channel</th>
-                          <th class="text-left font-weight-bold">Account Profile LINK</th>
+                          <th class="text-left font-weight-bold">
+                            Account Profile LINK
+                          </th>
                           <th class="text-left font-weight-bold">Created At</th>
                         </tr>
                       </thead>
@@ -333,11 +337,8 @@ const dialog_content_show = ref(0);
 
 onMounted(async () => {
   // await getUserInfo(""); TODO
-  console.log(profile);
-  console.log(profile.value);
 });
 onUpdated(async () => {
-  console.log(props.dialog_value && !profile.value.auth_id);
   if (props.dialog_value && !profile.value.auth_id) {
     await get_profile();
     await get_pp_channel();
@@ -353,6 +354,9 @@ const get_profile = async () => {
         profile.value.phone_no =
           "+" + profile.value.country_code + profile.value.phone_no;
       }
+      if (profile.value?.phone_no == 0) {
+        profile.value.phone_no = "";
+      }
     }
   }
 };
@@ -361,13 +365,14 @@ const get_pp_channel = async () => {
   if (req) {
     channels.value = req?.data;
 
-    const channelItem = channels.value.find(item => item.channel === "CH_LMS");
+    const channelItem = channels.value.find(
+      (item) => item.channel === "CH_LMS"
+    );
     if (channelItem && channelItem.created_at) {
       profile.value.created_at = channelItem.created_at;
     } else {
-      profile.value.created_at = '-';
+      profile.value.created_at = "-";
     }
-
   }
 };
 const phoneObject = (object) => {

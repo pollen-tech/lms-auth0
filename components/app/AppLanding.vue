@@ -1,47 +1,48 @@
 <template>
   <!--not_authenticate-->
   <div>
-    <div v-if="!is_authenticated" class="home-bg h-100">
-      <LandingBanner />
-      <LandingTopContent />
+    <div v-if="is_authenticated">
+      <div v-if="!is_authenticated" class="home-bg h-100">
+        <LandingBanner />
+        <LandingTopContent />
 
-      <v-container>
-        <v-card elevation="0" class="px-1" style="background-color: transparent">
-          <LandingFeatureList />
-          <LandingTextWImage />
-        </v-card>
-      </v-container>
-
-			<AppFooter />
-
-      <CommonConfirm ref="confirm" />
-    </div>
-
-
-
-
-    <!--authenticated-->
-    <div v-else>
-      <v-container>
-        <v-card elevation="0" class="px-1">
-          <!--<LandingBanner />-->
-					<v-breadcrumbs
-            class="text-caption text-purple text-capitalize mb-2"
-            :items="['home']"
+        <v-container>
+          <v-card
+            elevation="0"
+            class="px-1"
+            style="background-color: transparent"
           >
-            <template #prepend>
-              <v-icon size="small">mdi-home</v-icon>
-            </template>
-          </v-breadcrumbs>
+            <LandingFeatureList />
+            <LandingTextWImage />
+          </v-card>
+        </v-container>
 
-					<LandingEmpty />
+        <AppFooter />
 
-          
-        </v-card>
+        <CommonConfirm ref="confirm" />
+      </div>
 
-        <!--<CommonEmpty />-->
-        {{ console.log('is_authenticated: ', is_authenticated) }}
-      </v-container>
+      <!--authenticated-->
+      <div v-else>
+        <v-container>
+          <v-card elevation="0" class="px-1">
+            <!--<LandingBanner />-->
+            <v-breadcrumbs
+              class="text-caption text-purple text-capitalize mb-2"
+              :items="['home']"
+            >
+              <template #prepend>
+                <v-icon size="small">mdi-home</v-icon>
+              </template>
+            </v-breadcrumbs>
+
+            <LandingEmpty />
+          </v-card>
+
+          <!--<CommonEmpty />-->
+          {{ console.log("is_authenticated: ", is_authenticated) }}
+        </v-container>
+      </div>
     </div>
   </div>
 </template>
@@ -79,12 +80,9 @@ const showDialog = async () => {
   }
 };
 
-const onSignUp = () => {};
-
 onMounted(() => {
   // showDialog();
 });
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

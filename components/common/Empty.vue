@@ -38,8 +38,6 @@ const props = defineProps({
 const on_login = () => {
   navigateTo("/auth/login");
 };
-const phoneLocal = ref("");
-const salesTeamNumber = ref("");
 </script>
 
 <style scoped></style>

@@ -1,7 +1,6 @@
 <template>
   <!--<v-layout :class="is_authenticated ? 'auth' : 'not_auth'">-->
-    <v-layout :class="{ 'auth': isAuthenticated, 'not_auth': !isAuthenticated }">
-  
+  <v-layout :class="{ auth: isAuthenticated, not_auth: !isAuthenticated }">
     <CommonLoading v-if="is_loading" :loading="true" />
     <v-app-bar
       fixed
@@ -10,7 +9,7 @@
       class="mb-3 bg-white"
     >
       <v-app-bar-nav-icon
-        v-if="$vuetify.display.mobile"
+        v-if="is_authenticated && $vuetify.display.mobile"
         @click.stop="showNavMobile()"
       />
       <div>
@@ -26,7 +25,11 @@
             </p>
           </v-list-item-title>
           <v-list-item-title v-else class="d-flex align-center">
-            <img src="../assets/image/pollen-logo-white.svg" width="40px" style="padding: 5px;"/>
+            <img
+              src="../assets/image/pollen-logo-white.svg"
+              width="40px"
+              style="padding: 5px"
+            />
 
             <p
               v-if="!$vuetify.display.mobile"
@@ -52,7 +55,7 @@
                 <v-list-item>
                   <NuxtLink
                     class="text-grey-darken-1 text-body-2 cursor-pointer text-decoration-none"
-                    @click="onSignUp()"
+                    @click="on_signup()"
                   >
                     Sign Up with Pollen Pass
                   </NuxtLink>
@@ -69,20 +72,27 @@
             </v-card-text>
           </v-card>
         </v-menu>
-        <div v-else class="my-10" :class="{'bg-white': is_authenticated, 'bg-purple-lms': !is_authenticated}">
+        <div
+          v-else
+          class="my-10"
+          :class="{
+            'bg-white': is_authenticated,
+            'bg-purple-lms': !is_authenticated,
+          }"
+        >
           <v-btn
             v-if="!is_authenticated"
             variant="outlined"
             class="my-4 mx-2 me-auto text-capitalize"
             color="#374151"
             @click="onLogin()"
-            style="background-color: #fff;"
+            style="background-color: #fff"
             >Login</v-btn
           >
           <v-btn
             v-if="!is_authenticated"
             class="my-4 mx-2 me-auto text-capitalize bg-purple-darken-3"
-            @click="onSignUp()"
+            @click="on_signup()"
             >Sign Up with Pollen Pass</v-btn
           >
         </div>
@@ -140,7 +150,6 @@
           </h5>
           <h6 class="font-weight-regular">
             Email:
-            <!--{{ profile?.auth_id || "-" }}-->
             {{ profile?.email || "-" }}
           </h6>
         </div>
@@ -185,7 +194,7 @@
           >
             <v-avatar color="purple-lighten-5 " size="33">
               <span class="purple--text text-h6 text-capitalize">
-                {{ "-" }}
+                {{ company?.name ? company?.name.charAt(0) : "" }}
               </span>
             </v-avatar>
             <div class="pl-6">
@@ -193,10 +202,10 @@
                 class="text-body-2 multiline-text text-white"
                 style="width: 160px"
               >
-                {{ prolfile?.first_name || "" }}
-                {{ prolfile?.last_name || "" }}
+                {{ profile?.first_name || "" }}
+                {{ profile?.last_name || "" }}
               </div>
-              <v-chip class="ma-2" variant="outlined" size="x-small"
+              <v-chip class="my-2" variant="outlined" size="x-small"
                 >{{ company?.name }}
               </v-chip>
             </div>
@@ -305,68 +314,67 @@
         />
       </div>
       <v-dialog v-model="displayLogoutDialog">
-      <v-card
-        class="mx-auto pa-2"
-        :width="$vuetify.display.mobile ? 'auto' : '500'"
-      >
-        <v-card-item>
-          <div class="text-overline my-2 d-flex justify-space-between">
-            <div class="bg-purple-lighten-5 rounded-circle">
-              <v-icon size="large" color="purple-darken-2" class="ma-2"
-                >mdi-lightbulb-on-20</v-icon
+        <v-card
+          class="mx-auto pa-2"
+          :width="$vuetify.display.mobile ? 'auto' : '500'"
+        >
+          <v-card-item>
+            <div class="text-overline my-2 d-flex justify-space-between">
+              <div class="bg-purple-lighten-5 rounded-circle">
+                <v-icon size="large" color="purple-darken-2" class="ma-2"
+                  >mdi-lightbulb-on-20</v-icon
+                >
+              </div>
+
+              <v-icon
+                size="large"
+                @click="displayLogoutDialog = false"
+                style="color: #6b7280"
+                >mdi-close</v-icon
               >
             </div>
-
-            <v-icon
-              size="large"
-              @click="displayLogoutDialog = false"
-              style="color: #6b7280"
-              >mdi-close</v-icon
-            >
-          </div>
-          <div class="pt-4">
-            <h4 style="color: #111827; font-size: 18px">
-              Are you sure you want to log out?
-            </h4>
-            <p class="py-2" style="color: #6b7280; font-size: 14px">
-              Logging out means you are about to leave this page, are you sure
-              you want to logout?
-            </p>
-          </div>
-        </v-card-item>
-        <v-card-text>
-          <div class="d-flex justify-end mt-2">
-            <v-btn
-              variant="outlined"
-              class="ma-2 text-capitalize"
-              @click="displayLogoutDialog = false"
-              style="color: #374151; font-size: 16px; letter-spacing: 0"
-              >Back</v-btn
-            >
-            <v-btn
-              variant="outlined"
-              class="ma-2 text-capitalize"
-              @click="onLogout()"
-              style="
-                background-color: #8431e7;
-                border: none;
-                color: #fff;
-                font-size: 16px;
-                letter-spacing: 0;
-              "
-              >Logout</v-btn
-            >
-          </div>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+            <div class="pt-4">
+              <h4 style="color: #111827; font-size: 18px">
+                Are you sure you want to log out?
+              </h4>
+              <p class="py-2" style="color: #6b7280; font-size: 14px">
+                Logging out means you are about to leave this page, are you sure
+                you want to logout?
+              </p>
+            </div>
+          </v-card-item>
+          <v-card-text>
+            <div class="d-flex justify-end mt-2">
+              <v-btn
+                variant="outlined"
+                class="ma-2 text-capitalize"
+                @click="displayLogoutDialog = false"
+                style="color: #374151; font-size: 16px; letter-spacing: 0"
+                >Back</v-btn
+              >
+              <v-btn
+                variant="outlined"
+                class="ma-2 text-capitalize"
+                @click="onLogout()"
+                style="
+                  background-color: #8431e7;
+                  border: none;
+                  color: #fff;
+                  font-size: 16px;
+                  letter-spacing: 0;
+                "
+                >Logout</v-btn
+              >
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
       <v-footer class="pa-0 w-100 d-flex justify-end bg-transparent">
         <p class="text-caption text-grey pr-4 pb-2">
           {{ title }} v{{ version }}
         </p>
       </v-footer>
     </v-main>
-
   </v-layout>
 </template>
 
@@ -390,13 +398,11 @@ const sidebarStore = useSidebarStore();
 const sidebar = sidebarStore.sidebarData;
 
 const seller_store = useSellerStore();
-const { get_user_profile } = seller_store;
+const { get_company_profile, get_user_profile } = seller_store;
 
 const currentUrl = computed(() => route.fullPath);
-const userProfile = ref({ id: null });
 const title = ref("Pollen LMS");
 const rail = ref(true);
-const zIndex = ref(999);
 const drawer = ref(true);
 const version = ref("2.0.0");
 const dialogVisible = ref(false);
@@ -415,7 +421,7 @@ const company = ref({
 
 const displayLogoutDialog = ref(false);
 const loading = ref(false);
-const profile = ref({});
+const profile = ref();
 const dialog_visible = ref(false);
 const dialog_company = ref(false);
 const show_side_nav = computed(() => {
@@ -428,21 +434,21 @@ const show_side_nav = computed(() => {
 onMounted(async () => {
   is_loading.value = true;
   if (user_id) {
-  //await get_company();
+    await get_company();
     await get_profile();
   }
   isAuthenticated.value = is_user_authenticated();
   is_loading.value = false;
 });
 
-//const get_company = async () => {
-//  const req = await get_company_profile(user_id);
-//  if (req) {
-//    if (JSON.stringify(company.value) !== JSON.stringify(req)) {
-//      company.value = req;
-//    }
-//  }
-//};
+const get_company = async () => {
+  const req = await get_company_profile(user_id);
+  if (req) {
+    if (JSON.stringify(company.value) !== JSON.stringify(req)) {
+      company.value = req;
+    }
+  }
+};
 const get_profile = async () => {
   const req = await get_user_profile(user_id);
   if (req) {
@@ -455,9 +461,9 @@ const get_profile = async () => {
 //  dialogVisible.value = true;
 //};
 
-//const showCompanySetting = () => {
-//  dialogVisibleCompany.value = true;
-//};
+const showCompanySetting = () => {
+  dialogVisibleCompany.value = true;
+};
 
 const showNavMobile = () => {
   drawer.value = !drawer.value;
@@ -468,7 +474,7 @@ const onLogin = () => {
   navigateTo("/auth/login");
 };
 
-const onSignUp = () => {
+const on_signup = () => {
   navigateToPollenPass("signup");
 };
 
@@ -496,5 +502,4 @@ const show_company_setting = () => {
 //};
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
