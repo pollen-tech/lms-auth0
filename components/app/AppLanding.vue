@@ -1,48 +1,46 @@
 <template>
   <!--not_authenticate-->
   <div>
-    <div v-if="is_authenticated">
-      <div v-if="!is_authenticated" class="home-bg h-100">
-        <LandingBanner />
-        <LandingTopContent />
+    <div v-if="!is_authenticated" class="home-bg h-100">
+      <LandingBanner />
+      <LandingTopContent />
 
-        <v-container>
-          <v-card
-            elevation="0"
-            class="px-1"
-            style="background-color: transparent"
+      <v-container>
+        <v-card
+          elevation="0"
+          class="px-1"
+          style="background-color: transparent"
+        >
+          <LandingFeatureList />
+          <LandingTextWImage />
+        </v-card>
+      </v-container>
+
+      <AppFooter />
+
+      <CommonConfirm ref="confirm" />
+    </div>
+
+    <!--authenticated-->
+    <div v-else>
+      <v-container>
+        <v-card elevation="0" class="px-1">
+          <!--<LandingBanner />-->
+          <v-breadcrumbs
+            class="text-caption text-purple text-capitalize mb-2"
+            :items="['home']"
           >
-            <LandingFeatureList />
-            <LandingTextWImage />
-          </v-card>
-        </v-container>
+            <template #prepend>
+              <v-icon size="small">mdi-home</v-icon>
+            </template>
+          </v-breadcrumbs>
 
-        <AppFooter />
+          <LandingEmpty />
+        </v-card>
 
-        <CommonConfirm ref="confirm" />
-      </div>
-
-      <!--authenticated-->
-      <div v-else>
-        <v-container>
-          <v-card elevation="0" class="px-1">
-            <!--<LandingBanner />-->
-            <v-breadcrumbs
-              class="text-caption text-purple text-capitalize mb-2"
-              :items="['home']"
-            >
-              <template #prepend>
-                <v-icon size="small">mdi-home</v-icon>
-              </template>
-            </v-breadcrumbs>
-
-            <LandingEmpty />
-          </v-card>
-
-          <!--<CommonEmpty />-->
-          {{ console.log("is_authenticated: ", is_authenticated) }}
-        </v-container>
-      </div>
+        <!--<CommonEmpty />-->
+        {{ console.log("is_authenticated: ", is_authenticated) }}
+      </v-container>
     </div>
   </div>
 </template>

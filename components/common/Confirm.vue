@@ -27,7 +27,7 @@
                 @click="hideDialog"
               />
             </div>
-            <div class="d-flex flex-column">
+            <div class="d-flex flex-column mt-2">
               {{ options.title }}
             </div>
             <div
@@ -69,15 +69,15 @@ export default {
   props: {
     label: {
       type: String,
-      default: '',
+      default: "",
     },
     badge: {
       type: String,
-      default: '',
+      default: "",
     },
     placeholder: {
       type: String,
-      default: '',
+      default: "",
     },
     default: {
       type: String,
@@ -93,16 +93,16 @@ export default {
       options: {
         message: null,
         title: null,
-        icon: '',
-        color: 'grey lighten-3',
+        icon: "",
+        color: "grey lighten-3",
         width: 420,
         zIndex: 200,
         noconfirm: false,
         rejection: false,
-        actionText1: '',
-        actionText2: '',
-        actionIcon1: '',
-        actionIcon2: '',
+        actionText1: "",
+        actionText2: "",
+        actionIcon1: "",
+        actionIcon2: "",
       },
     };
   },

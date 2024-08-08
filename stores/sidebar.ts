@@ -8,6 +8,14 @@ export const useSidebarStore = defineStore("main", {
           icon: "mdi-cog",
           name: "company",
           title: "Company",
+          children: [
+            {
+              icon: "mdi-account-group",
+              name: "team",
+              title: "Team Management",
+              to: "company/team",
+            },
+          ],
         },
       ],
     };

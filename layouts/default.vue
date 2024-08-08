@@ -13,7 +13,7 @@
         @click.stop="showNavMobile()"
       />
       <div>
-        <v-list-item class="pl-1">
+        <v-list-item class="pl-1" @click="go_to_homepage">
           <v-list-item-title v-if="isAuthenticated" class="d-flex align-center">
             <img src="../assets/image/pollen-lms.svg" />
 
@@ -299,7 +299,7 @@
       style="background: #f9fafb"
     >
       <div class="h-100 w-100 overflow-hidden">
-        <slot :user_authenticated="is_authenticated" />
+        <slot :user_authenticated="is_authenticated" :company="company" />
         <ProfileSettings
           v-model="dialog_visible"
           :dialog_value="dialog_visible"
@@ -413,7 +413,7 @@ const is_loading = ref(false);
 const is_authenticated = computed(() => {
   return is_user_authenticated();
 });
-const isAuthenticated = ref(false);
+const isAuthenticated = ref(true);
 const company = ref({
   id: "",
   name: "",
@@ -480,6 +480,10 @@ const on_signup = () => {
 
 const onLogout = () => {
   localStorage.clear();
+  window.location.href = "/";
+};
+
+const go_to_homepage = () => {
   window.location.href = "/";
 };
 const navigateToPollenPass = (param) => {
