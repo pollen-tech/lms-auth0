@@ -161,22 +161,19 @@ const invite_member = async () => {
     const { valid } = await formRef.value.validate();
     if (valid) {
       const body = {
-        // user_id: props.profile.user_id,
-        // pollen_pass_id: props.profile.pollen_pass_id,
         last_name: member.value.last_name,
         first_name: member.value.first_name,
-        country_code: member.value.country_code,
-        phone_no: member.value.phone_no || 0,
+        phone_no: phone.value ? parseInt(phone.value) : member.value.phone_no,
+        country_code: member.value.country_code
+          ? parseInt(member.value.country_code)
+          : 0,
         email: member.value.email,
         company_id: props.company.id,
         role_id: member.value.role.role_id,
         role_name: member.value.role.role_name,
       };
       const req = await submit_invite(props.profile.user_id, body);
-      if (req.statusCode) {
-        body.user_id = props.profile.user_id + 1;
-        body.status = "inactive";
-        members.push(body);
+      if (!req.statusCode) {
         emit("close");
         emit("loadfn", true);
         await form_ref.value.reset();
@@ -192,9 +189,10 @@ const invite_member = async () => {
 
 const phoneObject = (object) => {
   phoneValid.value = object.valid;
-  member.value.phone_no = object?.number;
+  phone.value = object?.nationalNumber;
+  member.value.phone_no = object?.nationalNumber;
   member.value.country_code = object?.countryCallingCode
-    ? "+" + object?.countryCallingCode
+    ? object?.countryCallingCode
     : 0;
 };
 </script>

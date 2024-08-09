@@ -11,7 +11,7 @@
       @loadFn=""
     />
 
-    <v-sheet class="d-flex align-center pa-2 my-4 rounded-lg bg-white">
+    <v-sheet class="d-none align-center pa-2 my-4 rounded-lg bg-white">
       <div class="mx-4">
         <p>Selected</p>
         <b>{{ selected.length }}</b>
@@ -23,6 +23,7 @@
         append-icon="mdi-chevron-down"
         color="#8431e7"
         class="text-capitalize mr-2"
+        disabled="true"
       >
         Bulk Action
         <v-tooltip activator="parent"> Not Available </v-tooltip>
@@ -48,7 +49,6 @@
         height="50vh"
         class="elevation-0 fixed-cell bg-white"
         fixed-header
-        show-select
         :loading="is_loading"
         hide-default-footer
         loading-text="Loading... Please wait"
@@ -65,28 +65,28 @@
         </template>
 
         <template #item.status="{ item }">
-          <div class="ma-2 text-start">
-            <v-chip v-if="item.status === 'Active'" color="green">
+          <div class="ma-2 text-center">
+            <v-chip v-if="item.status === 'ACTIVE'" color="green">
               Active
             </v-chip>
             <v-chip
-              v-else-if="item.status === 'Incomplete'"
+              v-else-if="item.status === 'INCOMPLETE'"
               color="orange-lighten-1"
             >
               Incomplete
             </v-chip>
             <v-chip
               v-else-if="
-                item.status === 'Suspended' || item.status === 'Inactive'
+                item.status === 'SUSPENDED' || item.status === 'INACTIVE'
               "
               color="red-darken-3"
             >
-              {{ item.status }}
+              Inactive
             </v-chip>
             <v-chip v-else color="gray"> {{ item.status }} </v-chip>
-            <p class="text-caption mt-1 ml-2">
+            <!-- <p class="text-caption mt-1 ml-2">
               Last activity: {{ item.last_update }}
-            </p>
+            </p> -->
           </div>
         </template>
         <template #item.action="{ item }">
@@ -99,7 +99,7 @@
             >
             </v-btn>
             <v-btn
-              icon="mdi-trash-can-outline"
+              icon="mdi-account-cancel-outline"
               variant="text"
               class="mr-1"
               @click="remove_item(item)"
@@ -240,6 +240,10 @@ const load_team = async (param) => {
 };
 
 const edit_item = (param) => {
+  console.log(param);
+  if (JSON.stringify(param.phone_no).length <= 2) {
+    param.phone_no = null;
+  }
   selected_member.value = param;
   dialog_edit.value = true;
 };
@@ -247,8 +251,8 @@ const edit_item = (param) => {
 const remove_item = async (param) => {
   try {
     const options = {
-      title: `Are you sure you want to remove ${param.first_name}!`,
-      message: `Removing this contact means that we will permanently delete all the information in our database and can’t be retrieved again. Are you sure you want to proceed?`,
+      title: `Are you sure you want to remove access this account ${param.first_name}?`,
+      message: `Removing access to this contact means that we will set the user inactive. Are you sure you want to proceed?`,
       icon: "mdi-help-circle-outline",
       color: "purple darken-2",
       actionText1: "Back",
@@ -258,7 +262,9 @@ const remove_item = async (param) => {
     };
     if (await confirm.value.open(options)) {
       const req = await delete_member(param.user_id);
-      if (req.statusCode) {
+      if (!req.statusCode) {
+        load_team();
+      } else {
         handle_error(req);
       }
     }

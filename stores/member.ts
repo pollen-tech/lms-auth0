@@ -6,12 +6,12 @@ export const useMemberStore = defineStore("member", {
     return {
       headers_member: [
         {
-          title: "Account ID",
+          title: "Pollen Pass ID",
           align: "center",
           sortable: false,
-          key: "user_id",
+          key: "pollen_pass_id",
         },
-        { title: "pollen_pass_id", align: "d-none", key: "pollen_pass_id" },
+        { title: "user_id", align: "d-none", key: "user_id" },
         { title: "First Name", align: "d-none", key: "first_name" },
         { title: "Last Name", align: "d-none", key: "last_name" },
         { title: "Name", align: "center", key: "full_name" },
@@ -28,32 +28,7 @@ export const useMemberStore = defineStore("member", {
         { value: "pollen-admin", label: "Admin" },
         { value: "pollen-super-admin", label: "Super Admin" },
       ],
-      members: [
-        {
-          user_id: "001",
-          pollen_pass_id: "001",
-          first_name: "John",
-          last_name: "Doe",
-          email: "johndoe@pollen.tech",
-          phone_no: "+1 8123749102",
-          role_id: 1,
-          role_name: "Company Admin",
-          status: "Active",
-          last_update: "03/12/2024",
-        },
-        {
-          user_id: "002",
-          pollen_pass_id: "001",
-          first_name: "Anoop",
-          last_name: "Sasidharan",
-          email: "anoop@pollen.tech",
-          phone_no: "",
-          role_id: 2,
-          role_name: "Account Member",
-          status: "Inactive",
-          last_update: "03/12/2024",
-        },
-      ],
+      members: [],
       member_roles: [],
     };
   },
@@ -64,15 +39,11 @@ export const useMemberStore = defineStore("member", {
     },
     async fetch_team(param: any) {
       const { data } = await lmsApi(`/lms/company-user/${param}`);
-      // this.members = data;
+      this.members = data;
       return data;
     },
     async submit_invite(user_id: any, body: any) {
-      const res = await lmsApi(
-        `/lms/company-user/user/${user_id}`,
-        "POST",
-        body
-      );
+      const res = await lmsApi(`/lms/company-user/user`, "POST", body);
       return res;
     },
     async update_member(user_id: any, body: any) {

@@ -290,6 +290,7 @@ onUpdated(async () => {
   if (currMember && currMember?.first_name && props.show_member) {
     // TODO
     role.value = props.selected_member.role_id;
+    // props.selected_member.phone_no = props.selected_member.role_id;
   }
 }),
   onMounted(async () => {});
