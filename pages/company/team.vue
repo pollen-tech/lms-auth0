@@ -23,7 +23,7 @@
         append-icon="mdi-chevron-down"
         color="#8431e7"
         class="text-capitalize mr-2"
-        disabled="true"
+        :disabled="true"
       >
         Bulk Action
         <v-tooltip activator="parent"> Not Available </v-tooltip>
@@ -56,6 +56,12 @@
         <template #item.full_name="{ item }">
           <div class="d-flex align-center pl-2 my-2">
             {{ item.first_name + " " + item.last_name }}
+            <span
+              v-if="user_profile?.pollen_pass_id === item?.pollen_pass_id"
+              class="text-grey text-caption"
+            >
+              &nbsp;(You)</span
+            >
           </div>
         </template>
         <template #item.phone_no="{ item }">
@@ -66,24 +72,9 @@
 
         <template #item.status="{ item }">
           <div class="ma-2 text-center">
-            <v-chip v-if="item.status === 'ACTIVE'" color="green">
-              Active
+            <v-chip :color="get_color(item.status.toLowerCase())">
+              {{ STATUS[item.status] }}
             </v-chip>
-            <v-chip
-              v-else-if="item.status === 'INCOMPLETE'"
-              color="orange-lighten-1"
-            >
-              Incomplete
-            </v-chip>
-            <v-chip
-              v-else-if="
-                item.status === 'SUSPENDED' || item.status === 'INACTIVE'
-              "
-              color="red-darken-3"
-            >
-              Inactive
-            </v-chip>
-            <v-chip v-else color="gray"> {{ item.status }} </v-chip>
             <!-- <p class="text-caption mt-1 ml-2">
               Last activity: {{ item.last_update }}
             </p> -->
@@ -100,6 +91,7 @@
             </v-btn>
             <v-btn
               icon="mdi-account-cancel-outline"
+              :disabled="user_profile?.pollen_pass_id === item?.pollen_pass_id"
               variant="text"
               class="mr-1"
               @click="remove_item(item)"
@@ -171,6 +163,7 @@
 
 <script setup>
 import { ref } from "vue";
+import { STATUS } from "~/utils/constant";
 import { useSellerStore } from "~/stores/seller";
 import { useMemberStore } from "~/stores/member";
 import { useCommonStore } from "~/stores/common";
@@ -184,7 +177,7 @@ const user_profile = computed(() => {
 });
 
 const member_store = useMemberStore();
-const { headers_member, fetch_team, get_roles, delete_member } = member_store;
+const { headers_member, fetch_team, get_roles, revoke_member } = member_store;
 const members = computed(() => member_store.members);
 const member_roles = computed(() => member_store.member_roles);
 
@@ -197,7 +190,7 @@ const search_option = ref([
 ]);
 const selected = ref([]);
 const page_size = ref(10);
-const is_loading = ref(false);
+const is_loading = ref(true);
 const dialog_team = ref(false);
 const dialog_edit = ref(false);
 const dialog_success = ref(false);
@@ -217,7 +210,6 @@ watch(seller_company, (newValue) => {
 onMounted(async () => {
   await load_team();
   await get_roles();
-  console.log(member_roles.value);
 });
 
 const clearSearch = () => {
@@ -227,22 +219,25 @@ const clearSearch = () => {
 
 const load_team = async (param) => {
   try {
+    is_loading.value = true;
     if (param) {
       dialog_success.value = true;
     }
     if (seller_company.value?.id) {
       await fetch_team(seller_company.value.id);
-      console.log(members.value);
     }
+    is_loading.value = false;
   } catch (err) {
+    is_loading.value = false;
     console.log("error: ", err);
   }
 };
 
 const edit_item = (param) => {
-  console.log(param);
   if (JSON.stringify(param.phone_no).length <= 2) {
-    param.phone_no = null;
+    param.phone_no = undefined;
+  } else {
+    param.phone_no = JSON.stringify(param.phone_no);
   }
   selected_member.value = param;
   dialog_edit.value = true;
@@ -261,7 +256,7 @@ const remove_item = async (param) => {
       rejection: false,
     };
     if (await confirm.value.open(options)) {
-      const req = await delete_member(param.user_id);
+      const req = await revoke_member(param.user_id);
       if (!req.statusCode) {
         load_team();
       } else {
@@ -300,6 +295,23 @@ const handle_error = (req) => {
     status: "error",
     msg: errorMsg,
   });
+};
+
+const get_color = (status) => {
+  switch (status) {
+    case "active":
+      return "green";
+    case "incomplete":
+      return "orange-lighten-1";
+    case "unverified phone":
+    case "unverified email":
+      return "orange-lighten-1";
+    case "suspended":
+    case "inactive":
+      return "red-darken-3";
+    default:
+      return "grey-darken-2";
+  }
 };
 </script>
 

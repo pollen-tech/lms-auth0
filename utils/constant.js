@@ -14,4 +14,8 @@ export const CHANNEL = {
   CH_POLLEN_DIRECT: "Pollen Direct",
 };
 
-export const STATUS = ["Pending", "Success", "Failed", "Error"];
+export const STATUS = {
+  ACTIVE: "Active",
+  INACTIVE: "Inactive",
+  SUSPENDED: "Suspended",
+};

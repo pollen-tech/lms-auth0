@@ -15,7 +15,7 @@
       variant="plain"
       icon="mdi-close"
       class="mt-5 mx-2 floating-close-btn"
-      @click="closeDialog()"
+      @click="close_dialog()"
     />
     <v-card
       outlined
@@ -34,7 +34,7 @@
             stacked
             variant="tonal"
             class="notification__close rounded-0 rounded-s-lg"
-            @click="closeDialog"
+            @click="close_dialog"
           >
             <v-icon>mdi-close</v-icon>
           </v-btn>
@@ -77,9 +77,10 @@
                     variant="outlined"
                     placeholder="Enter first name"
                     required
-                    :rules="required_email"
+                    :rules="required"
                   ></v-text-field>
                 </div>
+
                 <div class="my-2">
                   <label class="font-weight-medium text-body-2"
                     >Last Name
@@ -89,9 +90,10 @@
                     variant="outlined"
                     placeholder="Enter last name"
                     required
-                    :rules="required_email"
+                    :rules="required"
                   ></v-text-field>
                 </div>
+
                 <div class="my-2">
                   <label class="font-weight-medium text-body-2">Email </label>
 
@@ -99,9 +101,11 @@
                     v-model="selected_member.email"
                     variant="outlined"
                     placeholder="Enter Email"
+                    :disabled="true"
                     :rules="required_email"
                   ></v-text-field>
                 </div>
+
                 <div class="my-2">
                   <label class="font-weight-medium text-body-2"
                     >Phone Number
@@ -125,7 +129,7 @@
                     @validate="phoneObject"
                   />
                 </div>
-                <div class="my-2">
+                <div class="mt-6">
                   <label class="font-weight-medium text-body-2">Role </label>
 
                   <v-select
@@ -136,87 +140,76 @@
                     :return-object="true"
                     variant="outlined"
                     :rules="required"
+                    :disabled="
+                      profile.pollen_pass_id == selected_member?.pollen_pass_id
+                    "
                     :placeholder="role ? '' : 'Choose one'"
                   ></v-select>
                 </div>
                 <div class="my-2">
                   <label class="font-weight-medium text-body-2">Status </label>
-
                   <div class="mt-2 text-start">
                     <v-chip
-                      v-if="selected_member.status === 'Active'"
-                      color="green"
-                      size="small"
+                      :color="get_color(selected_member.status.toLowerCase())"
                     >
-                      Active
-                    </v-chip>
-                    <v-chip
-                      v-else-if="selected_member.status === 'Incomplete'"
-                      color="orange-lighten-1"
-                      size="small"
-                    >
-                      Incomplete
-                    </v-chip>
-                    <v-chip
-                      v-else-if="
-                        selected_member.status === 'Suspended' ||
-                        selected_member.status === 'Inactive'
-                      "
-                      size="small"
-                      color="red-darken-3"
-                    >
-                      {{ selected_member.status }}
-                    </v-chip>
-                    <v-chip v-else size="small" color="gray">
-                      {{ selected_member?.status }}
+                      {{ STATUS[selected_member.status] }}
                     </v-chip>
                   </div>
                 </div>
               </v-sheet>
-              <v-sheet class="mx-2 px-6 w-100 d-flex justify-space-between">
-                <v-btn
-                  v-if="selected_member.id"
-                  text="Revoke Access"
-                  prepend-icon="mdi-account-cancel"
-                  variant="outlined"
-                  color="red-darken-1"
-                  class="mb-2 mx-2 me-auto w-50 text-capitalize"
-                  @click="addBuyerContact"
-                />
-                <v-btn
-                  text="Save Changes"
-                  color="#8431e7"
-                  class="mb-2 mx-2 me-auto w-50 text-capitalize"
-                  :loading="is_loading"
-                  :block="!selected_member.id"
-                  @click="submit"
-                />
-              </v-sheet>
+              <v-row class="mx-4">
+                <v-col>
+                  <v-btn
+                    text="Revoke Access"
+                    prepend-icon="mdi-account-cancel"
+                    block
+                    variant="outlined"
+                    color="red-darken-1"
+                    class="mb-2 mx-2 me-auto w-50 text-capitalize"
+                    :disabled="
+                      profile.pollen_pass_id == selected_member?.pollen_pass_id
+                    "
+                    @click="revoke_access"
+                  />
+                </v-col>
+                <v-col>
+                  <v-btn
+                    text="Save Changes"
+                    color="#8431e7"
+                    class="mb-2 mx-2 me-auto w-50 text-capitalize"
+                    :loading="is_loading"
+                    :block="!selected_member.id"
+                    @click="submit"
+                  />
+                </v-col>
+              </v-row>
             </v-form>
           </v-sheet>
         </v-col>
       </v-row>
     </v-card>
+    <CommonConfirm ref="confirm" />
   </v-dialog>
 </template>
 
 <script setup>
 import { ref, watch } from "vue";
-import { debounce } from "lodash";
 import { VueTelInput } from "vue-tel-input";
 import "vue-tel-input/vue-tel-input.css";
 import { useMemberStore } from "~/stores/member";
+import { STATUS } from "~/utils/constant";
 
 const props = defineProps({
   value: Boolean,
   selected_member: { type: Object, required: false },
   show_member: { type: Boolean, required: false, default: false },
+  profile: { type: Object, default: {} },
 });
 
 const emit = defineEmits(["close", "loadfn", "error"]);
 
 const member_store = useMemberStore();
-const { update_member } = member_store;
+const { update_member, revoke_member } = member_store;
 const roles = computed(() => member_store.member_roles);
 
 const dialog_visible = ref(false);
@@ -242,8 +235,8 @@ const submit = async () => {
         user_id: props.selected_member.user_id,
         last_name: props.selected_member.last_name,
         first_name: props.selected_member.first_name,
-        country_code: props.selected_member.country_code, // TODO
-        phone_no: props.selected_member.phone_no || 0,
+        country_code: parseInt(props.selected_member.country_code) || 0, // TODO
+        phone_no: extract_phone(props.selected_member.phone_no),
         company_id: props.selected_member.id,
         role_id: role.value.role_name
           ? role.value.role_id
@@ -254,8 +247,7 @@ const submit = async () => {
       };
       const req = await update_member(props.selected_member.user_id, body);
       if (!req.statusCode) {
-        emit("close");
-        emit("loadfn", true);
+        close_dialog();
       } else {
         emit("error", req);
       }
@@ -267,15 +259,74 @@ const submit = async () => {
   }
 };
 
-const closeDialog = () => {
+const extract_phone = (param) => {
+  if (param == undefined || param == " " || !param) {
+    return 0;
+  }
+  if (phone.value) {
+    return parseInt(phone.value);
+  }
+  if (param.includes(" ")) {
+    const cn = param.replace(/ /g, "");
+    return parseInt(cn);
+  }
+};
+
+const revoke_access = async () => {
+  try {
+    const options = {
+      title: `Are you sure you want to remove access this account ${props.selected_member.first_name}?`,
+      message: `Removing access to this contact means that we will set the user inactive. Are you sure you want to proceed?`,
+      icon: "mdi-help-circle-outline",
+      color: "purple darken-2",
+      actionText1: "Back",
+      actionText2: "Remove",
+      actionIcon2: "",
+      rejection: false,
+    };
+    if (await confirm.value.open(options)) {
+      const req = await revoke_member(props.selected_member.user_id);
+      if (!req.statusCode) {
+        close_dialog();
+      } else {
+        emit("error", req);
+      }
+    }
+  } catch (err) {
+    emit("error", err);
+  }
+};
+
+const close_dialog = () => {
   dialog_visible.value = false;
+  emit("loadfn");
   emit("close");
 };
 
 const phoneObject = (object) => {
-  phone_valid.value = object.valid;
-  props.selected_member.phone_no = object?.number;
-  props.selected_member.country_code = object?.countryCallingCode || 0;
+  if (object.nationalNumber) {
+    phone_valid.value = object.valid;
+    phone.value = object.nationalNumber;
+    props.selected_member.phone_no = object.nationalNumber;
+    props.selected_member.country_code = object?.countryCallingCode || 0;
+  }
+};
+
+const get_color = (status) => {
+  switch (status) {
+    case "active":
+      return "green";
+    case "incomplete":
+      return "orange-lighten-1";
+    case "unverified phone":
+    case "unverified email":
+      return "orange-lighten-1";
+    case "suspended":
+    case "inactive":
+      return "red-darken-3";
+    default:
+      return "grey-darken-2";
+  }
 };
 
 watch(
@@ -288,9 +339,8 @@ watch(
 onUpdated(async () => {
   const currMember = props.selected_member;
   if (currMember && currMember?.first_name && props.show_member) {
-    // TODO
+    phone.value = null;
     role.value = props.selected_member.role_id;
-    // props.selected_member.phone_no = props.selected_member.role_id;
   }
 }),
   onMounted(async () => {});

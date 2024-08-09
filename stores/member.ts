@@ -54,7 +54,7 @@ export const useMemberStore = defineStore("member", {
       );
       return res;
     },
-    async delete_member(user_id: any, body: any) {
+    async revoke_member(user_id: any) {
       const res = await lmsApi(`/lms/company-user/user/${user_id}`, "DELETE");
       return res;
     },
