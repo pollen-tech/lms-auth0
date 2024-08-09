@@ -13,3 +13,9 @@ export const CHANNEL = {
   CH_POLLEN_PASS: "Pollen Pass",
   CH_POLLEN_DIRECT: "Pollen Direct",
 };
+
+export const STATUS = {
+  ACTIVE: "Active",
+  INACTIVE: "Inactive",
+  SUSPENDED: "Suspended",
+};

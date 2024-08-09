@@ -6,26 +6,27 @@
       <LandingTopContent />
 
       <v-container>
-        <v-card elevation="0" class="px-1" style="background-color: transparent">
+        <v-card
+          elevation="0"
+          class="px-1"
+          style="background-color: transparent"
+        >
           <LandingFeatureList />
           <LandingTextWImage />
         </v-card>
       </v-container>
 
-			<AppFooter />
+      <AppFooter />
 
       <CommonConfirm ref="confirm" />
     </div>
-
-
-
 
     <!--authenticated-->
     <div v-else>
       <v-container>
         <v-card elevation="0" class="px-1">
           <!--<LandingBanner />-->
-					<v-breadcrumbs
+          <v-breadcrumbs
             class="text-caption text-purple text-capitalize mb-2"
             :items="['home']"
           >
@@ -34,13 +35,11 @@
             </template>
           </v-breadcrumbs>
 
-					<LandingEmpty />
-
-          
+          <LandingEmpty />
         </v-card>
 
         <!--<CommonEmpty />-->
-        {{ console.log('is_authenticated: ', is_authenticated) }}
+        {{ console.log("is_authenticated: ", is_authenticated) }}
       </v-container>
     </div>
   </div>
@@ -79,12 +78,9 @@ const showDialog = async () => {
   }
 };
 
-const onSignUp = () => {};
-
 onMounted(() => {
   // showDialog();
 });
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

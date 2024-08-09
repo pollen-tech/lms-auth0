@@ -29,6 +29,18 @@ export const useSellerStore = defineStore("seller", {
       sellerCompanyTypes: [],
       sellerLiquidate: [],
       sellerProfile: {},
+      sellerStatus: [
+        "Approved",
+        "Rejected",
+        "Incomplete",
+        "Completed",
+        "Pending",
+        "Unonboard",
+        "Merge",
+        "Invited",
+      ],
+      seller_company: null,
+      user_profile: null,
     };
   },
   actions: {
@@ -51,6 +63,7 @@ export const useSellerStore = defineStore("seller", {
     },
     async get_company_profile(param: any) {
       const data = await lmsApi(`/onboard-company/users/${param}`);
+      this.seller_company = data;
       return data;
     },
     async validate_user_exist(param: any) {
@@ -59,6 +72,7 @@ export const useSellerStore = defineStore("seller", {
     },
     async get_user_profile(param: any) {
       const req = await lmsApi(`/users/${param}`);
+      this.user_profile = req.data || req;
       return req;
     },
     async get_user_channel(param: any) {
